@@ -1,7 +1,7 @@
 # Bookshop
 
 ## Overview
-This project is a simple book website developed using Node.js. It allows bookshop owners to manage books by adding new entries, while regular users can view the available books. This initial version focuses on practicing Node.js and implementing basic CRUD operations without permission controls.
+This project is a simple book website developed using Node.js. It allows bookshop owners to manage books by adding new entries, while regular users can view the available books. This initial version focuses on practicing Node.js
 
 ## Features
 - **Display Books:** Users can browse and view the list of books available on the website.
