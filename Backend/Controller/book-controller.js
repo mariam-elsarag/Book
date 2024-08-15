@@ -46,7 +46,7 @@ exports.getBook = async (req, res) => {
 exports.createBook = async (req, res) => {
   try {
     const { title, author, price, published_year } = req.body;
-    console.log(req.body, "kk");
+
     if (!title || !author || !price) {
       if (!title) {
         res.status(400).json({ message: "Title is required" });
