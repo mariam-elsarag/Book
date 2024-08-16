@@ -8,6 +8,9 @@ const AppError = require("./utils/appError");
 const bookRoute = require("./Routes/book-route");
 const app = express();
 
+// controller
+const GlobalErrorHandler = require("./Controller/error-controller");
+
 // body
 app.use(express.json());
 // cors
@@ -22,10 +25,5 @@ app.all("*", (req, res, next) => {
 });
 
 // handle error middleware
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || httpStatusText.FAIL;
-  res.status(err.statusCode).json({ status: err.status, message: err.message });
-  next();
-});
+app.use(GlobalErrorHandler);
 module.exports = app;
