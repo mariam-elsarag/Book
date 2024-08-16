@@ -4,27 +4,32 @@ const ApiFeatures = require("../utils/apiFeatures");
 const CatchAsync = require("../utils/catchAsync");
 
 exports.getBooks = CatchAsync(async (req, res, next) => {
-  // base url
+  const features = new ApiFeatures(Book.find(), req.query)
+    .filter()
+    .limitFields()
+    .paginate();
+
+  const books = await features.query;
+
+  const paginationData = await features.getPaginationData(Book);
+
   const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
     req.path
   }`;
 
-  const page = +req.query.page || 1;
-  const limit = 3;
-
-  const count = await Book.countDocuments();
-  const pages = Math.ceil(count / limit);
-  const features = new ApiFeatures(Book.find(), req.query)
-    .limitFields()
-    .paginate();
-  const book = await features.query;
   res.status(200).json({
-    next: page < pages ? `${baseUrl}?page=${page + 1}` : null,
-    prev: page > 1 ? `${baseUrl}?page=${page - 1}` : null,
-    count,
-    results: book,
+    next: paginationData.hasNextPage
+      ? `${baseUrl}?page=${paginationData.currentPage + 1}`
+      : null,
+    prev: paginationData.hasPrevPage
+      ? `${baseUrl}?page=${paginationData.currentPage - 1}`
+      : null,
+    count: paginationData.totalRecords,
+    totalPages: paginationData.totalPages,
+    results: books,
   });
 });
+
 exports.getBook = CatchAsync(async (req, res, next) => {
   const feaures = new ApiFeatures(
     Book.findById(req.params.id),

@@ -64,9 +64,9 @@ const BookTable = () => {
         {location.pathname.includes("/book/all") && (
           <Link
             to={`/book/add`}
-            className="border border-blue-900 hover:bg-blue-900 hover:text-white transition-all ease-in-out duration-300 text-blue-900 font-semibold rounded-[4px] text-sm  flex items-end justify-center w-fit py-2 px-5"
+            className="border min-w-[150px] border-blue-900 hover:bg-blue-900 hover:text-white transition-all ease-in-out duration-300 text-blue-900 font-semibold rounded-[4px] text-sm  flex items-end justify-center w-fit py-2 px-5"
           >
-            + ADD
+            + ADD Book
           </Link>
         )}
       </header>

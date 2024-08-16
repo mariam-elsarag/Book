@@ -1,0 +1,28 @@
+.aside {
+  width: 250px;
+  padding: 20px 10px;
+  transition: 0.3s ease-in-out;
+  -webkit-transition: 0.3s ease-in-out;
+  -moz-transition: 0.3s ease-in-out;
+  -ms-transition: 0.3s ease-in-out;
+  -o-transition: 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  a:hover {
+    background-color: #fff;
+    color: #172554;
+  }
+  a.active {
+    width: 100%;
+  }
+  @media (max-width: 768px) {
+    width: 70px;
+    padding: 20px 0px;
+    a.active {
+      width: fit-content;
+    }
+    &_title {
+      display: none;
+    }
+  }
+}
