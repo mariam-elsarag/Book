@@ -6,6 +6,8 @@ const httpStatusText = require("./utils/httpStatusText");
 const AppError = require("./utils/appError");
 // routes
 const bookRoute = require("./Routes/book-route");
+const authRoute = require("./Routes/auth-route");
+const userRoute = require("./Routes/user-route");
 const app = express();
 
 // controller
@@ -18,6 +20,7 @@ app.use(cors());
 
 // Routes
 app.use("/api/book", bookRoute);
+app.use("/api/auth", authRoute);
 
 // error route
 app.all("*", (req, res, next) => {
