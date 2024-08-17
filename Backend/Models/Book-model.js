@@ -4,6 +4,7 @@ const bookSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Book title is required"],
+    unique: [true, "Book tilte must be unique"],
     maxlength: [100, "You exceed max length for title, 100 characters"],
   },
   author: {
@@ -18,6 +19,8 @@ const bookSchema = new mongoose.Schema({
   published_year: {
     type: Number,
     required: [true, "Book published year is required"],
+    min: [1000, "Published year must be after the year 1000"],
+    max: [new Date().getFullYear(), "Published year cannot be in the future"],
   },
 });
 

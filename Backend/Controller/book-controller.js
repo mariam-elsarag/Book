@@ -1,6 +1,7 @@
 const Book = require("../Models/Book-model");
-const ApiFeatures = require("../utils/apiFeatures");
 
+const AppError = require("../utils/appError");
+const ApiFeatures = require("../utils/apiFeatures");
 const CatchAsync = require("../utils/catchAsync");
 
 exports.getBooks = CatchAsync(async (req, res, next) => {
@@ -37,7 +38,7 @@ exports.getBook = CatchAsync(async (req, res, next) => {
   ).limitFields();
   const book = await feaures.query;
   if (!book) {
-    return res.status(404).json({ message: "Book not found" });
+    return next(new AppError("Book not found", 404));
   }
   res.status(200).json({ book });
 });
@@ -47,16 +48,16 @@ exports.createBook = CatchAsync(async (req, res, next) => {
 
   if (!title || !author || !price) {
     if (!title) {
-      res.status(400).json({ message: "Title is required" });
+      next(new AppError("Title is required", 400));
     }
     if (!author) {
-      res.status(400).json({ message: "Author is required" });
+      next(new AppError("Author is required", 400));
     }
     if (!price) {
-      res.status(400).json({ message: "Price is required" });
+      next(new AppError("Price is required", 400));
     }
     if (!published_year) {
-      res.status(400).json({ message: "Published year is required" });
+      next(new AppError("Published year is required", 400));
     }
     return;
   } else {
@@ -87,7 +88,7 @@ exports.updateBook = CatchAsync(async (req, res, next) => {
   ).limitFields();
   const updatedBook = await features.query;
   if (!updatedBook) {
-    return res.status(404).json({ message: "Book not found" });
+    return next(new AppError("Book not found", 404));
   }
 
   res.status(200).json({ book: updatedBook });
@@ -96,7 +97,7 @@ exports.updateBook = CatchAsync(async (req, res, next) => {
 exports.deleteBook = CatchAsync(async (req, res, next) => {
   const deletedBook = await Book.findByIdAndDelete(req.params.id);
   if (!deletedBook) {
-    return res.status(404).json({ message: "Book not found" });
+    return next(new AppError("Book not found", 404));
   }
 
   res.status(204).json({ data: "" });
