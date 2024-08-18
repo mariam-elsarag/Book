@@ -47,7 +47,7 @@ const sendErrorForPro = (err, res) => {
   if (err.isOperational) {
     res
       .status(err.statusCode)
-      .json({ status: err.status, message: err.message });
+      .json({ status: err.status, errors: err.message });
   } else {
     // console.error(err, "Error 🚫");
     // generic message

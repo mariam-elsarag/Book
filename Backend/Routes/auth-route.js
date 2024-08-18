@@ -11,4 +11,6 @@ const upload = multer();
 
 router.route("/register").post(upload.none(), authController.register);
 
+router.route("/login").post(upload.none(), authController.login);
+
 module.exports = router;
