@@ -1,9 +1,9 @@
-const multer = require("multer");
 // model
 const User = require("../Models/User-model");
 // utils
 const CatchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const httpStatusText = require("../utils/httpStatusText");
 
 exports.register = CatchAsync(async (req, res, next) => {
   const { first_name, last_name, email, password } = req.body;
@@ -24,6 +24,6 @@ exports.register = CatchAsync(async (req, res, next) => {
     return next(new AppError(error, 400));
   } else {
     const user = await User.create({ first_name, last_name, email, password });
-    res.status(201).json({ data: user });
+    res.status(201).json({ user });
   }
 });

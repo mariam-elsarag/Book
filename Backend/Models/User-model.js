@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 const userScema = new mongoose.Schema({
   first_name: {
     type: String,
@@ -36,6 +37,14 @@ const userScema = new mongoose.Schema({
     minLength: [8, "Min length for password is 8 characters"],
     select: false,
   },
+});
+// encrypt password
+userScema.pre("save", async function (next) {
+  // check if password is modified
+  if (!this.isModified("password")) return next();
+  // encrypt password
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
 });
 const User = mongoose.model("user", userScema, "users");
 module.exports = User;

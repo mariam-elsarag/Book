@@ -13,7 +13,12 @@ class ApiFeatures {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    this.query = this.query.find(JSON.parse(queryStr));
+    if (this.queryString.keywords) {
+      const keywordRegex = new RegExp(this.queryString.keywords, "i");
+      this.query = this.query.find({ title: { $regex: keywordRegex } });
+    } else {
+      this.query = this.query.find(JSON.parse(queryStr));
+    }
 
     return this;
   }
