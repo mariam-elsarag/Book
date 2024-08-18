@@ -53,5 +53,12 @@ userScema.methods.checkPassword = async function (
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
+// to remove password
+userScema.methods.toJson = function () {
+  const user = this;
+  const userObject = user.toObject();
+  delete userObject.password;
+  return userObject;
+};
 const User = mongoose.model("user", userScema, "users");
 module.exports = User;

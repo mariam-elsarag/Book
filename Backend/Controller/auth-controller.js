@@ -50,7 +50,7 @@ exports.login = CatchAsync(async (req, res, next) => {
     }
     return next(new AppError(error, 400));
   }
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email }).select("+password -__v");
 
   if (!user || !(await user.checkPassword(password, user.password))) {
     return next(new AppError("email or password are wrong", 401));
@@ -58,5 +58,7 @@ exports.login = CatchAsync(async (req, res, next) => {
 
   const token = generateToken(user);
 
-  res.status(200).json({ status: httpStatusText.SUCCESS, token, user });
+  res
+    .status(200)
+    .json({ status: httpStatusText.SUCCESS, token, user: user.toJson() });
 });
