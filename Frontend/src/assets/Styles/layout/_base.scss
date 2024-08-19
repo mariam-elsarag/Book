@@ -9,10 +9,10 @@
 }
 @layer components {
   label {
-    @apply text-blue-900 text-sm font-bold;
+    @apply text-neutral-500 text-base font-medium;
   }
   .input {
-    @apply border border-gray-300 active:border-blue-900 outline-none py-3 px-4 rounded-lg focus:border-blue-900 text-blue-900 caret-blue-900 placeholder:text-gray-400 text-base h-[48px];
+    @apply border border-gray-300 active:border-blue-900 outline-none py-1 px-2 rounded-[4px] focus:border-blue-900 text-blue-900 caret-blue-900 placeholder:text-gray-400 text-sm h-[40px];
   }
   .input-error {
     @apply border-red-600;

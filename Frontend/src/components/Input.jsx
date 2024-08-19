@@ -25,7 +25,7 @@ const Input = ({
         value={inputValue}
         className={`input ${error ? "input-error" : null} `}
         placeholder={placeholder}
-        onChange={(e) => handleChange(id, e.target.value)}
+        onChange={handleChange}
         disabled={disabled}
       />
       {error && <ErrorMessage message={error} />}
