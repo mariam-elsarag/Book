@@ -1,5 +1,5 @@
 const AppError = require("../utils/appError");
-
+const httpStatusText = require("../utils/httpStatusText");
 // handle cast error
 const handleCastErrorDb = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
@@ -34,7 +34,13 @@ const handleValidationErrorDb = (err) => {
   return new AppError(message, 400);
 };
 
-const httpStatusText = require("../utils/httpStatusText");
+// jwt
+const handleJWTError = () => {
+  return new AppError("Invalid token", 401);
+};
+const handleExpireJWTError = () => {
+  return new AppError("Your token has expired!", 401);
+};
 const sendErrorForDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -71,6 +77,15 @@ module.exports = (err, req, res, next) => {
     if (error.code === 11000) error = handleDuplicateKeyDb(error);
     if (error.name === "ValidationError")
       error = handleValidationErrorDb(error);
+    if (
+      error.name === "jsonWebTokenError" ||
+      error.name === "invalid signature"
+    ) {
+      error = handleJWTError();
+    }
+
+    if (error.name === "TokenExpiredError") error = handleExpireJWTError();
+
     sendErrorForPro(error, res);
   }
 

@@ -21,6 +21,7 @@ app.use(cors());
 // Routes
 app.use("/api/book", bookRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/user", userRoute);
 
 // error route
 app.all("*", (req, res, next) => {

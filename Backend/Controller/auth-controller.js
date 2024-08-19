@@ -1,3 +1,4 @@
+const { promisify } = require("node:util");
 const jwt = require("jsonwebtoken");
 // model
 const User = require("../Models/User-model");
@@ -61,4 +62,29 @@ exports.login = CatchAsync(async (req, res, next) => {
   res
     .status(200)
     .json({ status: httpStatusText.SUCCESS, token, user: user.toJson() });
+});
+exports.protect = CatchAsync(async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+  if (!token) {
+    return next(new AppError("Unauthorized: Access is denied", 401));
+  }
+  // check token
+  const decode = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  if (!decode) {
+    return next(new AppError("Unauthorized: Access is denied", 401));
+  }
+  // check user exist
+  const user = await User.findById(decode.id);
+  if (!user) {
+    return next(new AppError("User no longer exist", 404));
+  }
+
+  next();
 });
