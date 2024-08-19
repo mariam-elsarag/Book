@@ -85,6 +85,9 @@ exports.protect = CatchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError("User no longer exist", 404));
   }
-
+  // check if password change after jwt issue
+  if (user.checkChangePasswordAfterJWT(decode.iat)) {
+    return next(new AppError("User recently change password", 404));
+  }
   next();
 });

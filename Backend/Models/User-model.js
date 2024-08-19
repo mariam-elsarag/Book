@@ -37,6 +37,7 @@ const userScema = new mongoose.Schema({
     minLength: [8, "Min length for password is 8 characters"],
     select: false,
   },
+  passwordChangedAt: Date,
 });
 // encrypt password
 userScema.pre("save", async function (next) {
@@ -59,6 +60,18 @@ userScema.methods.toJson = function () {
   const userObject = user.toObject();
   delete userObject.password;
   return userObject;
+};
+// check if user change password after jwt issue
+userScema.methods.checkChangePasswordAfterJWT = function (jwtTimeStemp) {
+  if (this.passwordChangedAt) {
+    const passwordChangeInMillis = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return jwtTimeStemp < passwordChangeInMillis;
+  }
+
+  return false;
 };
 const User = mongoose.model("user", userScema, "users");
 module.exports = User;
