@@ -8,6 +8,7 @@ const AppError = require("./utils/appError");
 const bookRoute = require("./Routes/book-route");
 const authRoute = require("./Routes/auth-route");
 const userRoute = require("./Routes/user-route");
+const adminRoute = require("./Routes/admin-route");
 const app = express();
 
 // controller
@@ -21,6 +22,7 @@ app.use(cors());
 // Routes
 app.use("/api/book", bookRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/admin", adminRoute);
 app.use("/api/user", userRoute);
 
 // error route

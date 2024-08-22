@@ -114,7 +114,7 @@ exports.protect = CatchAsync(async (req, res, next) => {
   req.user = user;
   next();
 });
-
+// authrization
 exports.restrectTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -128,3 +128,16 @@ exports.restrectTo = (...roles) => {
     return next();
   };
 };
+
+// to check if this same user
+exports.checkUser = CatchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  console.log(req.user.id, "id");
+  console.log(id, "id from param");
+  if (req.user.id !== id) {
+    return next(
+      new AppError("You are not authorized to perform this action", 401)
+    );
+  }
+  return next();
+});
