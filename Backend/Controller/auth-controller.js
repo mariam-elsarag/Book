@@ -115,28 +115,16 @@ exports.protect = CatchAsync(async (req, res, next) => {
   next();
 });
 
-exports.isAdmin = CatchAsync(async (req, res, next) => {
-  const token = extractToken(req);
-  if (!token) return next(new AppError("Unauthorized: Access is denied", 401));
-
-  const decoded = await verifyToken(token);
-  if (!decoded)
-    return next(new AppError("Unauthorized: Access is denied", 401));
-
-  const user = await User.findById(decoded.id);
-  if (!user) return next(new AppError("User no longer exists", 404));
-  if (user.checkChangePasswordAfterJWT(decoded.iat)) {
-    return next(new AppError("User recently changed password", 404));
-  }
-
-  if (decoded.role === "admin") {
+exports.restrectTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError(
+          "Access denied: You do not have permission to perform this action",
+          403
+        )
+      );
+    }
     return next();
-  } else {
-    return next(
-      new AppError(
-        "Access denied: You do not have permission to perform this action",
-        403
-      )
-    );
-  }
-});
+  };
+};
