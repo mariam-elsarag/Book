@@ -25,6 +25,15 @@ exports.getUsers = CatchAsync(async (req, res, next) => {
     results: users,
   });
 });
+// get single user
+exports.getUser = CatchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const user = await User.findById(id);
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+  res.status(200).json({ status: httpStatusText.users, user });
+});
 // delete user
 exports.deleteUser = CatchAsync(async (req, res, next) => {
   const { id } = req.params;

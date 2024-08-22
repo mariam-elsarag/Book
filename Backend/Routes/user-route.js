@@ -20,6 +20,11 @@ router
 
 router
   .route("/:id")
+  .get(
+    authController.protect,
+    authController.restrectTo("admin"),
+    userController.getUser
+  )
   .delete(
     authController.protect,
     authController.restrectTo("admin"),
