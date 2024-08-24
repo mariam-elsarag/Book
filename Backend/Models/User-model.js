@@ -62,6 +62,12 @@ userScema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
+// change password at after rest password
+userScema.pre("save", async function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
 //check password
 userScema.methods.checkPassword = async function (
   candidatePassword,
@@ -92,7 +98,7 @@ userScema.methods.checkChangePasswordAfterJWT = function (jwtTimeStemp) {
 //reset token
 userScema.methods.CreateResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
-  this.resetPasswordExpire = Date.now() + 10 * 60 * 60 * 1000;
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
   this.resetPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)
@@ -100,10 +106,6 @@ userScema.methods.CreateResetToken = function () {
 
   return resetToken;
 };
-// verify reset token
-userScema.methods.VerifyResteToken = function (token) {
-  const hashedToken = crypto.createHash("sha256").digest("hex");
-  return this.resetPasswordToken === hashedToken;
-};
+
 const User = mongoose.model("user", userScema, "users");
 module.exports = User;
