@@ -1,6 +1,7 @@
 const { promisify } = require("node:util");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 // model
 const User = require("../Models/User-model");
 // utils
@@ -145,8 +146,7 @@ exports.checkUser = CatchAsync(async (req, res, next) => {
   }
   return next();
 });
-// reset password
-// exports.resetPassword = CatchAsync(async (req, res, next) => {});
+
 // forget password
 exports.forgetPassword = CatchAsync(async (req, res, next) => {
   const { email } = req.body;
@@ -204,6 +204,7 @@ exports.forgetPassword = CatchAsync(async (req, res, next) => {
     resetToken: resetToken,
   });
 });
+// reset password
 exports.resetPassword = CatchAsync(async (req, res, next) => {
   const { token } = req.params;
   const { password } = req.body;
@@ -224,6 +225,34 @@ exports.resetPassword = CatchAsync(async (req, res, next) => {
   user.resetPasswordExpire = undefined;
   user.resetPasswordToken = undefined;
   user.password = password;
+  await user.save();
+  const newToken = generateToken(user);
+  res.status(200).json({ status: httpStatusText.SUCCESS, token: newToken });
+});
+// change password
+exports.updatePassword = CatchAsync(async (req, res, next) => {
+  const { current_passwrord, new_password } = req.body;
+  if (!current_passwrord) {
+    return next(new AppError("current_passwrord is required", 400));
+  }
+  if (!new_password) {
+    return next(new AppError("new_password is required", 400));
+  }
+
+  const user = await User.findById(req.user.id).select("password");
+
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+  console.log(user, "roma");
+  const checkPassword = await user.checkPassword(
+    current_passwrord,
+    user.password
+  );
+  if (!checkPassword) {
+    return next(new AppError("Wrong Password", 400));
+  }
+  user.password = new_password;
   await user.save();
   const newToken = generateToken(user);
   res.status(200).json({ status: httpStatusText.SUCCESS, token: newToken });
