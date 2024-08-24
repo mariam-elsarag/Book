@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const userScema = new mongoose.Schema(
   {
     first_name: {
@@ -40,6 +42,8 @@ const userScema = new mongoose.Schema(
       select: false,
     },
     passwordChangedAt: Date,
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
     toJSON: { virtuals: true },
@@ -66,10 +70,11 @@ userScema.methods.checkPassword = async function (
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 // to remove password
-userScema.methods.toJson = function () {
+userScema.methods.noPassword = function () {
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;
+  delete userObject.__v;
   return userObject;
 };
 // check if user change password after jwt issue
@@ -83,6 +88,22 @@ userScema.methods.checkChangePasswordAfterJWT = function (jwtTimeStemp) {
   }
 
   return false;
+};
+//reset token
+userScema.methods.CreateResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 60 * 1000;
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  return resetToken;
+};
+// verify reset token
+userScema.methods.VerifyResteToken = function (token) {
+  const hashedToken = crypto.createHash("sha256").digest("hex");
+  return this.resetPasswordToken === hashedToken;
 };
 const User = mongoose.model("user", userScema, "users");
 module.exports = User;

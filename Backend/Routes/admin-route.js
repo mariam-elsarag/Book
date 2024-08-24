@@ -9,7 +9,7 @@ const userController = require("../Controller/user-controller");
 // multer
 const upload = multer();
 router
-  .route("/all")
+  .route("/users")
   .get(
     authController.protect,
     authController.restrectTo("admin"),

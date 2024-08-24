@@ -18,4 +18,12 @@ router
     userController.getUser
   );
 
+router
+  .route("/forget-password")
+  .post(upload.none(), authController.forgetPassword);
+
+// router
+//   .route("/reset-password/:token")
+//   .patch(upload.none(), authController.res);
+
 module.exports = router;

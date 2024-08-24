@@ -6,6 +6,7 @@ const User = require("../Models/User-model");
 const CatchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const httpStatusText = require("../utils/httpStatusText");
+const sendEmail = require("../utils/sendEmail");
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
@@ -72,7 +73,10 @@ exports.register = CatchAsync(async (req, res, next) => {
     password,
     role,
   });
-  res.status(201).json({ status: httpStatusText.SUCCESS, user });
+
+  res
+    .status(201)
+    .json({ status: httpStatusText.SUCCESS, user: user.noPassword() });
 });
 
 exports.login = CatchAsync(async (req, res, next) => {
@@ -92,9 +96,9 @@ exports.login = CatchAsync(async (req, res, next) => {
   }
 
   const token = generateToken(user);
-  res
-    .status(200)
-    .json({ status: httpStatusText.SUCCESS, token, user: user.toJson() });
+  const send = user.noPassword();
+
+  res.status(200).json({ status: httpStatusText.SUCCESS, token, user: send });
 });
 
 exports.protect = CatchAsync(async (req, res, next) => {
@@ -132,12 +136,69 @@ exports.restrectTo = (...roles) => {
 // to check if this same user
 exports.checkUser = CatchAsync(async (req, res, next) => {
   const { id } = req.params;
-  console.log(req.user.id, "id");
-  console.log(id, "id from param");
+
   if (req.user.id !== id) {
     return next(
       new AppError("You are not authorized to perform this action", 401)
     );
   }
   return next();
+});
+// reset password
+// exports.resetPassword = CatchAsync(async (req, res, next) => {});
+// forget password
+exports.forgetPassword = CatchAsync(async (req, res, next) => {
+  const { email } = req.body;
+
+  // Check if email is provided
+  if (!email) {
+    return next(new AppError("Email is required", 400));
+  }
+
+  // Find the user by email
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new AppError("There's no user with this email address.", 404));
+  }
+
+  // Generate the reset token
+  const resetToken = user.CreateResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  // Create the reset URL
+  const resetURL = `${process.env.FRONT_SERVER}/forget-password/${resetToken}`;
+
+  // Construct the email message
+  const html = `
+  <h2>Forget your password?</h2>
+  <p>
+    Click on the following link to reset your password: <a href="${resetURL}">Reset Password</a>.
+  </p>
+  <p>If you didn't forget your password, please ignore this email.</p>
+`;
+
+  try {
+    // Send the email
+    await sendEmail({
+      email,
+      subject: "Password Reset",
+      html,
+    });
+  } catch (err) {
+    console.log(err, "err");
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError(
+        "There was an error while sending the email. Try again later.",
+        500
+      )
+    );
+  }
+  return res.status(200).json({
+    status: "Success",
+    message: "Token sent to email",
+  });
 });
