@@ -250,7 +250,7 @@ exports.updatePassword = CatchAsync(async (req, res, next) => {
     user.password
   );
   if (!checkPassword) {
-    return next(new AppError("Wrong Password", 400));
+    return next(new AppError("Your current password is wrong", 400));
   }
   user.password = new_password;
   await user.save();
