@@ -29,7 +29,14 @@ const extractToken = (req) => {
 const verifyToken = async (token) => {
   return await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 };
-
+const createAndSendToken = (user, statusCode, res) => {
+  const token = generateToken(user);
+  res.status(statusCode).json({
+    status: httpStatusText.SUCCESS,
+    token,
+    user: user.noPassword(),
+  });
+};
 exports.register = CatchAsync(async (req, res, next) => {
   const { first_name, last_name, email, password, role } = req.body;
   const errors = [];
@@ -75,10 +82,7 @@ exports.register = CatchAsync(async (req, res, next) => {
     password,
     role,
   });
-
-  res
-    .status(201)
-    .json({ status: httpStatusText.SUCCESS, user: user.noPassword() });
+  createAndSendToken(user, 201, res);
 });
 
 exports.login = CatchAsync(async (req, res, next) => {
@@ -97,10 +101,7 @@ exports.login = CatchAsync(async (req, res, next) => {
     return next(new AppError("Email or password is incorrect", 401));
   }
 
-  const token = generateToken(user);
-  const send = user.noPassword();
-
-  res.status(200).json({ status: httpStatusText.SUCCESS, token, user: send });
+  createAndSendToken(user, 200, res);
 });
 
 exports.protect = CatchAsync(async (req, res, next) => {
@@ -136,7 +137,7 @@ exports.restrectTo = (...roles) => {
 };
 
 // to check if this same user
-exports.checkUser = CatchAsync(async (req, res, next) => {
+exports.checkUserId = CatchAsync(async (req, res, next) => {
   const { id } = req.params;
 
   if (req.user.id !== id) {
@@ -241,10 +242,6 @@ exports.updatePassword = CatchAsync(async (req, res, next) => {
 
   const user = await User.findById(req.user.id).select("password");
 
-  if (!user) {
-    return next(new AppError("User not found", 404));
-  }
-  console.log(user, "roma");
   const checkPassword = await user.checkPassword(
     current_passwrord,
     user.password

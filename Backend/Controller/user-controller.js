@@ -5,6 +5,7 @@ const CatchAsync = require("../utils/catchAsync");
 const ApiFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const httpStatusText = require("../utils/httpStatusText");
+const filterBodyFields = require("../utils/filterBodyFields");
 
 exports.getUsers = CatchAsync(async (req, res, next) => {
   const features = new ApiFeatures(User.find(), req.query).paginate();
@@ -42,4 +43,21 @@ exports.deleteUser = CatchAsync(async (req, res, next) => {
     return next(new AppError("User not found", 404));
   }
   res.status(204).json({ status: httpStatusText.users });
+});
+exports.updateUser = CatchAsync(async (req, res, next) => {
+  const filteredBody = filterBodyFields(
+    req.body,
+    "first_name",
+    "last_name",
+    "email"
+  );
+
+  const user = await User.findByIdAndUpdate(req.params.id, filteredBody, {
+    new: true,
+    runValidators: true,
+  }).select("-__v -passwordChangedAt");
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    user,
+  });
 });

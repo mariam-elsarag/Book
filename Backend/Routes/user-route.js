@@ -14,8 +14,14 @@ router
   .route("/:id")
   .get(
     authController.protect,
-    authController.checkUser,
+    authController.checkUserId,
     userController.getUser
+  )
+  .patch(
+    upload.none(),
+    authController.protect,
+    authController.checkUserId,
+    userController.updateUser
   );
 
 module.exports = router;

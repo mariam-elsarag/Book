@@ -23,10 +23,12 @@ class ApiFeatures {
     return this;
   }
 
-  limitFields() {
+  limitFields(selectItems) {
     if (this.queryString.fields) {
       const fields = this.queryString.fields.split(",").join(" ");
       this.query = this.query.select(fields);
+    } else if (selectItems) {
+      this.query = this.query.select(selectItems);
     } else {
       this.query = this.query.select("title price author published_year");
     }
