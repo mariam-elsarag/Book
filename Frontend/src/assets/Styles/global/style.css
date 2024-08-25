@@ -40,9 +40,29 @@
   fill: #172554 !important;
 }
 
+.p-accordion-tab .p-accordion-header-link {
+  background: transparent;
+  min-height: 30px;
+  border-bottom: 1px solid var(--light-grey);
+  color: var(--primary);
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+}
+.p-accordion-tab .p-accordion-header-link .p-icon {
+  display: none;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+:root {
+  --primary: #172554;
+  --light-grey: #404040;
+}
+
 @layer utilities {
   .nav a.active {
     @apply bg-white text-blue-950;

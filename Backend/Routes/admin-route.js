@@ -15,7 +15,14 @@ router
     authController.restrectTo("admin"),
     userController.getUsers
   );
-
+router
+  .route("/add-user")
+  .post(
+    upload.none(),
+    authController.protect,
+    authController.restrectTo("admin"),
+    userController.createUsers
+  );
 router
   .route("/:id")
   .get(

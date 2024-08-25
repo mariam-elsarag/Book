@@ -61,3 +61,30 @@ exports.updateUser = CatchAsync(async (req, res, next) => {
     user,
   });
 });
+// create users
+exports.createUsers = CatchAsync(async (req, res, next) => {
+  const filterBody = filterBodyFields(
+    req.body,
+    "first_name",
+    "last_name",
+    "email",
+    "password",
+    "role"
+  );
+  let errors = [];
+  if (!filterBody.first_name)
+    errors.push({ first_name: "First name is required" });
+  if (!filterBody.last_name)
+    errors.push({ last_name: "Last name is required" });
+  if (!filterBody.email) errors.push({ email: "Email is required" });
+  if (!filterBody.password) errors.push({ password: "Password is required" });
+
+  if (errors.length > 0) {
+    return next(new AppError(errors, 400));
+  }
+  const user = await User.create(filterBody);
+  res.status(201).json({
+    status: httpStatusText.SUCCESS,
+    user: user.noPassword(),
+  });
+});

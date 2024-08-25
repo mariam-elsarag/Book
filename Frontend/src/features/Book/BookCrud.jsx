@@ -4,14 +4,36 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
 import SpinnerFullPage from "../../components/SpinnerFullPage";
+import { useSelector } from "react-redux";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 const apiKey = import.meta.env.VITE_REACT_APP_BASE_URL;
 
 const BookCrud = () => {
   const { id } = useParams();
-  const [data, setData] = useState();
-  const [error, setError] = useState();
+  const { token } = useSelector((store) => store.auth);
+
   const [loading, setLoading] = useState(false);
   const [loadingBook, setLoadingBook] = useState(false);
+  const {
+    control,
+    setError,
+    reset,
+    setValue,
+    formState: { errors, isValid, dirtyFields },
+    handleSubmit,
+    watch,
+  } = useForm({
+    defaultValues: {
+      title: "",
+      author: "",
+      published_year: 0,
+      price: 0,
+    },
+    mode: "onChange",
+  });
+  const all = watch();
+
   // in edit page get book
   const getBook = async () => {
     const controller = new AbortController();
@@ -20,11 +42,16 @@ const BookCrud = () => {
     try {
       setLoadingBook(true);
       const response = await axios.get(`${apiKey}/api/book/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         signal,
       });
       const fetchedData = await response.data.book;
-      setData(fetchedData);
-      console.log(response.data, "kk");
+      setValue("title", fetchedData.title);
+      setValue("author", fetchedData.author);
+      setValue("published_year", fetchedData.published_year);
+      setValue("price", fetchedData.price);
     } catch (error) {
       console.error("Error fetching data:", error);
 
@@ -39,137 +66,49 @@ const BookCrud = () => {
     }
   }, []);
 
-  const handleChange = (field, value) => {
-    setData((prev) => ({ ...prev, [field]: value }));
-    // for error
-    if (value === "") {
-      setError((pre) => ({
-        ...pre,
-        [field]: {
-          message: "This Field is required",
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      const response = await axios.post(`${apiKey}/api/book/`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      }));
-    } else {
-      setError((pre) => ({
-        ...pre,
-        [field]: {
-          message: "",
-        },
-      }));
-    }
-  };
-  const handleErrors = () => {
-    let hasErrors = false;
+      });
 
-    if (data?.title === "" || !data?.title) {
-      setError((prev) => ({
-        ...prev,
-        title: {
-          message: "This field is required",
-        },
-      }));
-
-      hasErrors = true;
-    } else {
-      setError((prev) => ({
-        ...prev,
-        title: {
-          message: "",
-        },
-      }));
-    }
-
-    if (data?.author === "" || !data?.author) {
-      setError((prev) => ({
-        ...prev,
-        author: {
-          message: "This field is required",
-        },
-      }));
-
-      hasErrors = true;
-    } else {
-      setError((prev) => ({
-        ...prev,
-        author: {
-          message: "",
-        },
-      }));
-    }
-    if (data?.price === "" || !data?.price) {
-      setError((prev) => ({
-        ...prev,
-        price: {
-          message: "This field is required",
-        },
-      }));
-
-      hasErrors = true;
-    } else {
-      setError((prev) => ({
-        ...prev,
-        price: {
-          message: "",
-        },
-      }));
-    }
-    if (data?.published_year === "" || !data?.published_year) {
-      setError((prev) => ({
-        ...prev,
-        published_year: {
-          message: "This field is required",
-        },
-      }));
-
-      hasErrors = true;
-    } else {
-      setError((prev) => ({
-        ...prev,
-        published_year: {
-          message: "",
-        },
-      }));
-    }
-
-    return hasErrors;
-  };
-
-  const handleSubmit = async () => {
-    const hasErrors = handleErrors();
-    if (!hasErrors) {
-      try {
-        setLoading(true);
-        const response = await axios.post(`${apiKey}/api/book/`, data);
-
-        if (response.status === 201) {
-          setData();
-        }
-      } catch (err) {
-        console.log("error", err);
-      } finally {
-        setLoading(false);
+      if (response.status === 201) {
+        reset();
       }
+    } catch (err) {
+      console.log("error", err);
+    } finally {
+      setLoading(false);
     }
   };
+
   // for update data
-  const updateData = async () => {
-    const hasErrors = handleErrors();
+  const updateData = async (data) => {
+    try {
+      setLoading(true);
+      const response = await axios.patch(`${apiKey}/api/book/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!hasErrors) {
-      try {
-        setLoading(true);
-        const response = await axios.patch(`${apiKey}/api/book/${id}`, data);
-
-        if (response.status === 200) {
-          setData(response.data.book);
-        }
-      } catch (err) {
-        console.log("error", err);
-      } finally {
-        setLoading(false);
+      if (response.status === 200) {
+        toast.success("Successully edit book data");
+        setValue("title", response.data.book.title);
+        setValue("author", response.data.book.author);
+        setValue("published_year", response.data.book.published_year);
+        setValue("price", response.data.book.price);
       }
+    } catch (err) {
+      console.log("error", err);
+    } finally {
+      setLoading(false);
     }
   };
+
   if (loadingBook) return <SpinnerFullPage />;
   return (
     <div className="grid gap-8">
@@ -181,43 +120,77 @@ const BookCrud = () => {
           {location.pathname.includes("edit") ? "Edit Book" : "Add New Book"}
         </Link>
       </header>
-      <div className="grid gap-4">
-        <Input
-          id="title"
-          label="Title"
-          value={data?.title || ""}
-          type="text"
-          placeholder="Enter book title"
-          handleChange={handleChange}
-          error={error?.title?.message}
+      <form
+        onSubmit={handleSubmit(
+          location.pathname.includes("edit") ? updateData : onSubmit
+        )}
+        className="grid gap-4"
+      >
+        <Controller
+          name="title"
+          rules={{ required: "Title is required" }}
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Input
+              id="title"
+              label="Title"
+              type="text"
+              placeholder="Enter book title"
+              error={errors?.title?.message}
+              handleChange={field.onChange}
+              value={field.value}
+            />
+          )}
         />
-        <Input
-          id="author"
-          label="Author"
-          value={data?.author || ""}
-          type="text"
-          placeholder="Enter book author"
-          handleChange={handleChange}
-          error={error?.author?.message}
+        <Controller
+          name="author"
+          rules={{ required: "Author is required" }}
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <Input
+              id="author"
+              label="Author"
+              type="text"
+              placeholder="Enter book author"
+              error={errors?.author?.message}
+              handleChange={field.onChange}
+              value={field.value}
+            />
+          )}
         />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4  items-start">
-          <Input
-            id="published_year"
-            label="Published Year"
-            type="number"
-            value={data?.published_year || ""}
-            placeholder="Enter book Published Year"
-            handleChange={handleChange}
-            error={error?.published_year?.message}
+          <Controller
+            name="published_year"
+            rules={{ required: "Published year is required" }}
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                id="published_year"
+                type="number"
+                label="Published Year"
+                placeholder="Enter book Published Year"
+                error={errors?.published_year?.message}
+                handleChange={field.onChange}
+                value={field.value}
+              />
+            )}
           />
-          <Input
-            id="price"
-            label="Price"
-            type="number"
-            value={data?.price || ""}
-            placeholder="Enter book Price"
-            handleChange={handleChange}
-            error={error?.price?.message}
+          <Controller
+            name="price"
+            rules={{ required: "Price is required" }}
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                id="price"
+                label="Price"
+                type="number"
+                placeholder="Enter book Price"
+                error={errors?.price?.message}
+                handleChange={field.onChange}
+                value={field.value}
+              />
+            )}
           />
         </div>
         <div className="flex items-center justify-end gap-4">
@@ -228,9 +201,9 @@ const BookCrud = () => {
             view all
           </Link>
           <button
-            disabled={loading}
-            onClick={
-              location.pathname.includes("edit") ? updateData : handleSubmit
+            type="submit"
+            disabled={
+              Object.keys(dirtyFields)?.length > 0 ? false : true || loading
             }
             className=" disabled:bg-white disabled:text-gray-400 disabled:shadow-sm disabled:border-gray-400 flex items-center gap-2 outline-none shadow-none bg-blue-900 text-white text-sm border border-blue-900 hover:bg-white hover:text-blue-900 hover:border-blue-900 transition-all duration-300 ease-in-out px-4 h-[38px] rounded-[4px]"
           >
@@ -238,7 +211,7 @@ const BookCrud = () => {
             {loading && <Spinner className="w-[18px] h-[18px]" />}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

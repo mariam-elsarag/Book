@@ -4,7 +4,7 @@ const bookSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Book title is required"],
-    unique: [true, "Book tilte must be unique"],
+
     maxlength: [100, "You exceed max length for title, 100 characters"],
   },
   author: {

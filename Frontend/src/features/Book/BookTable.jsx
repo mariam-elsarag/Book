@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useGetData from "../../hooks/useGetData";
 import { FiEdit } from "react-icons/fi";
 import { MdOutlineDelete } from "react-icons/md";
 import { HiOutlineChevronRight, HiOutlineChevronLeft } from "react-icons/hi2";
 import axios from "axios";
+import Header from "../../Ui/Header";
+import Table from "../../Ui/Table";
 const apiKey = import.meta.env.VITE_REACT_APP_BASE_URL;
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
+const colums = ["title", "author", "price"];
 const BookTable = () => {
+  const navigate = useNavigate();
+  const { token } = useSelector((store) => store.auth);
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
   const [next, setNext] = useState(`${apiKey}/api/book/?page=1`);
@@ -21,6 +29,9 @@ const BookTable = () => {
         setLoading(true);
         const Endpoint = endpoint ? endpoint : next;
         const response = await axios.get(Endpoint, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           signal,
         });
         const fetchedData = await response.data.results;
@@ -42,25 +53,39 @@ const BookTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`${apiKey}/api/book/${id}`);
-
+      const response = await axios.delete(`${apiKey}/api/book/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.status, "k");
       if (response.status === 204) {
-        getBooks();
+        toast.success("Successfully delete book");
+        getBooks(`${apiKey}/api/book/?page=1`);
       }
     } catch (err) {
       console.log("error", err);
     }
   };
-
+  // navigate
+  const handleNavigate = (item) => {
+    navigate(`/book/${item?._id}/edit`);
+  };
+  const actionList = [
+    {
+      id: 0,
+      icon: <MdOutlineDelete size={20} color="#b50808" />,
+      action: (item) => handleDelete(item._id),
+    },
+    {
+      id: 1,
+      icon: <FiEdit size={18} color="#1e3a8a" />,
+      action: (item) => handleNavigate(item),
+    },
+  ];
   return (
     <div className="grid gap-8">
-      <header className="flex items-center gap-2 justify-between">
-        <Link
-          to={"/book/all"}
-          className="text-blue-900  font-bold text-lg md:text-2xl  capitalize"
-        >
-          Book register
-        </Link>
+      <Header title="Book register" link={"/book/all"}>
         {location.pathname.includes("/book/all") && (
           <Link
             to={`/book/add`}
@@ -69,46 +94,14 @@ const BookTable = () => {
             + ADD Book
           </Link>
         )}
-      </header>
-      <div className="w-full">
-        <header className="grid grid-cols-[1fr_1fr_1fr_100px] py-3 bg-neutral-50 rounded-t-[4px] ">
-          <div className="  text-neutral-700 ">Title</div>
-          <div className=" text-center text-neutral-700">Author</div>
-          <div className=" text-center text-neutral-700">Price</div>
-          <div className="  "></div>
-        </header>
-        {/* body */}
-        <div className="w-full">
-          {data?.map((item, index) => (
-            <ul
-              className={`grid py-3 ${
-                data?.length - 1 !== index ? "border-b border-neutral-300" : ""
-              } grid-cols-[1fr_1fr_1fr_100px]`}
-              key={item?._id}
-            >
-              <li className=" text-xs text-neutral-700">{item?.title}</li>
-              <li className="text-center text-xs text-neutral-700">
-                {item?.author}
-              </li>
-              <li className="text-center text-xs text-neutral-700">
-                {item?.price}
-              </li>
-              <li className="flex items-center justify-center gap-2">
-                <span
-                  onClick={() => {
-                    handleDelete(item?._id);
-                  }}
-                >
-                  <MdOutlineDelete size={20} color="#b50808" />
-                </span>
-                <Link to={`/book/${item?._id}/edit`}>
-                  <FiEdit size={18} color="#1e3a8a" />
-                </Link>
-              </li>
-            </ul>
-          ))}
-        </div>
-      </div>
+      </Header>
+      <Table
+        columns={colums}
+        data={data}
+        noFields="grid-cols-[1fr_1fr_1fr_100px]"
+        actionList={actionList}
+      />
+
       {/* pagination */}
       {(next || previous) && (
         <div className="flex items-center gap-5 justify-center ">

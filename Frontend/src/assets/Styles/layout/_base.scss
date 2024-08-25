@@ -1,7 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+:root {
+  --primary: #172554;
+  --dark-grey: #404040;
+  --light-grey: #e5e7eb;
+}
 @layer utilities {
   .nav a.active {
     @apply bg-white text-blue-950;

@@ -9,6 +9,7 @@ const CatchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const httpStatusText = require("../utils/httpStatusText");
 const sendEmail = require("../utils/sendEmail");
+const filterBodyFields = require("../utils/filterBodyFields");
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
@@ -38,51 +39,31 @@ const createAndSendToken = (user, statusCode, res) => {
   });
 };
 exports.register = CatchAsync(async (req, res, next) => {
-  const { first_name, last_name, email, password, role } = req.body;
   const errors = [];
+  const filterBody = filterBodyFields(
+    req.body,
+    "first_name",
+    "last_name",
+    "email",
+    "password"
+  );
 
-  if (!first_name) errors.push({ first_name: "First name is required" });
-  if (!last_name) errors.push({ last_name: "Last name is required" });
-  if (!email) errors.push({ email: "Email is required" });
-  if (!password) errors.push({ password: "Password is required" });
+  if (!filterBody.first_name)
+    errors.push({ first_name: "First name is required" });
+  if (!filterBody.last_name)
+    errors.push({ last_name: "Last name is required" });
+  if (!filterBody.email) errors.push({ email: "Email is required" });
+  if (!filterBody.password) errors.push({ password: "Password is required" });
 
   if (errors.length > 0) {
     return next(new AppError(errors, 400));
   }
 
-  if (role === "admin") {
-    const token = extractToken(req);
-    if (!token)
-      return next(new AppError("Unauthorized: Access is denied", 401));
-
-    const decoded = await verifyToken(token);
-    if (!decoded)
-      return next(new AppError("Unauthorized: Access is denied", 401));
-
-    const user = await User.findById(decoded.id);
-    if (!user) return next(new AppError("User no longer exists", 404));
-    if (user.checkChangePasswordAfterJWT(decoded.iat)) {
-      return next(new AppError("User recently changed password", 404));
-    }
-
-    if (decoded.role !== "admin") {
-      return next(
-        new AppError(
-          "Access denied: You do not have permission to perform this action",
-          403
-        )
-      );
-    }
-  }
-
-  const user = await User.create({
-    first_name,
-    last_name,
-    email,
-    password,
-    role,
+  const user = await User.create(filterBody);
+  res.status(201).json({
+    status: httpStatusText.SUCCESS,
+    user: user.noPassword(),
   });
-  createAndSendToken(user, 201, res);
 });
 
 exports.login = CatchAsync(async (req, res, next) => {
