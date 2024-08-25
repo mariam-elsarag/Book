@@ -24,7 +24,7 @@ router
     userController.createUsers
   );
 router
-  .route("/:id")
+  .route("/user/:id")
   .get(
     authController.protect,
     authController.restrectTo("admin"),

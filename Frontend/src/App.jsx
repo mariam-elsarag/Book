@@ -8,6 +8,11 @@ const AppLayout = lazy(() => import("./pages/AppLayout"));
 const BookContainer = lazy(() => import("./features/Book/BookContainer"));
 const BookTable = lazy(() => import("./features/Book/BookTable"));
 const AddBook = lazy(() => import("./features/Book/BookCrud"));
+// users
+const User_Container = lazy(() => import("./features/users/UserContainer"));
+const User_List = lazy(() => import("./features/users/UserList"));
+const User_Crud = lazy(() => import("./features/users/CrudUser"));
+
 // unAuth routes
 const Login = lazy(() => import("./features/Auth/Login"));
 
@@ -19,7 +24,13 @@ const App = () => {
       <Routes location={location} key={location.pathname}>
         {token?.length > 0 && token !== null ? (
           <Route path="/" element={<AppLayout />}>
-            <Route index element={<Navigate to="book" replace />} />
+            <Route index element={<Navigate to="users" replace />} />
+            <Route path="users" element={<User_Container />}>
+              <Route index element={<Navigate to="list" replace />} />
+              <Route path="list" element={<User_List />} />
+              <Route path="add" element={<User_Crud />} />
+              <Route path=":id/eidt" element={<User_Crud />} />
+            </Route>
             <Route path="book" element={<BookContainer />}>
               <Route index element={<Navigate to="all" replace />} />
               <Route path="all" element={<BookTable />} />
