@@ -3,6 +3,7 @@ import React, { Suspense, lazy, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Navigate, Route, Routes } from "react-router-dom";
+import SpinnerFullPage from "./Ui/SpinnerFullPage";
 
 // Routes
 const AppLayout = lazy(() => import("./pages/AppLayout"));
@@ -23,7 +24,7 @@ const App = () => {
   const { token } = useSelector((store) => store.auth);
 
   return (
-    <Suspense>
+    <Suspense fallback={<SpinnerFullPage />}>
       <Routes location={location} key={location.pathname}>
         {token?.length > 0 && token !== null ? (
           <Route path="/" element={<AppLayout />}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Spinner from "./Spinner";
+import Spinner from "../Ui/Spinner";
 
 const Button = ({
   children,
