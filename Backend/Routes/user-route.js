@@ -18,6 +18,16 @@ router
     userController.getUser
   )
   .patch(
+    authController.protect,
+    authController.checkUserId,
+    userController.deActivateUser
+  )
+  .delete(
+    authController.protect,
+    authController.checkUserId,
+    userController.deleteUser
+  )
+  .patch(
     upload.none(),
     authController.protect,
     authController.checkUserId,

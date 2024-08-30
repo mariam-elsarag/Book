@@ -44,6 +44,15 @@ const userScema = new mongoose.Schema(
     passwordChangedAt: Date,
     resetPasswordToken: String,
     resetPasswordExpire: Date,
+    isActive: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+    deActiveTime: {
+      type: Date,
+      select: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -68,6 +77,11 @@ userScema.pre("save", async function (next) {
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
+// filter user that have isActive false
+userScema.pre(/^find/, function (next) {
+  this.find({ isActive: true });
+  next();
+});
 //check password
 userScema.methods.checkPassword = async function (
   candidatePassword,
@@ -81,6 +95,8 @@ userScema.methods.noPassword = function () {
   const userObject = user.toObject();
   delete userObject.password;
   delete userObject.__v;
+  delete userObject.deActiveTime;
+  delete userObject.isActive;
   return userObject;
 };
 // check if user change password after jwt issue

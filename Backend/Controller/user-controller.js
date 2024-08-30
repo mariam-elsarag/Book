@@ -88,3 +88,18 @@ exports.createUsers = CatchAsync(async (req, res, next) => {
     user: user.noPassword(),
   });
 });
+
+exports.deActivateUser = CatchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const user = await User.findByIdAndUpdate(id, {
+    isActive: false,
+    deActiveTime: Date.now(),
+  });
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+  res.status(200).json({
+    status: httpStatusText.SUCCESS,
+    message: "Successfully deactivate account",
+  });
+});

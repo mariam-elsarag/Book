@@ -77,11 +77,18 @@ exports.login = CatchAsync(async (req, res, next) => {
     return next(new AppError(errors, 400));
   }
 
-  const user = await User.findOne({ email }).select("+password -__v");
+  const user = await User.findOne({ email }).select(
+    "+password -__v +isActive +deActiveTime "
+  );
   if (!user || !(await user.checkPassword(password, user.password))) {
     return next(new AppError("Email or password is incorrect", 401));
   }
-
+  // if user is deactive and try to activate account again
+  if (!user.isActive) {
+    user.isActive = true;
+    user.deActiveTime = undefined;
+  }
+  await user.save();
   createAndSendToken(user, 200, res);
 });
 
