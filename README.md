@@ -6,19 +6,13 @@ This project is a simple book website developed using Node.js. It allows booksho
 
 ## Main Technology
 
-### Backend
-
-- **Node.js**
-- **Express**
-- **Mongoose**
-
-### Frontend
-
-- **React.js**
-- **Tailwind CSS**
-- **Redux**
-- **Sass**
-- **PrimeReact**
+| Frontend     | Backend  |
+| ------------ | -------- |
+| React.js     | Node.js  |
+| Tailwind CSS | Express  |
+| Redux        | Mongoose |
+| Sass         |          |
+| PrimeReact   |          |
 
 ## Features
 
