@@ -3,6 +3,7 @@ import React, { Suspense, lazy, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { Navigate, Route, Routes } from "react-router-dom";
+
 // Routes
 const AppLayout = lazy(() => import("./pages/AppLayout"));
 const BookContainer = lazy(() => import("./features/Book/BookContainer"));
@@ -13,6 +14,8 @@ const User_Container = lazy(() => import("./features/users/UserContainer"));
 const User_List = lazy(() => import("./features/users/UserList"));
 const User_Crud = lazy(() => import("./features/users/CrudUser"));
 
+// page not found
+const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 // unAuth routes
 const Login = lazy(() => import("./features/Auth/Login"));
 
@@ -41,6 +44,7 @@ const App = () => {
         ) : (
           <Route path="/" element={<Login />} />
         )}
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Suspense>
   );

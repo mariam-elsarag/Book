@@ -17,6 +17,7 @@ const Button = ({
   const styles = {
     primary: `${base_style} bg-blue-950 text-white hover:bg-blue-900  `,
     outline: `${base_style} border border-blue-950 hover:bg-blue-950 text-blue-950`,
+    white: `${base_style} text-primary rounded-full bg-white w-full hover:bg-primary hover:text-white border hover:border-white `,
   };
   if (to)
     return (
