@@ -31,9 +31,20 @@ This project is a simple book website developed using Node.js. It allows booksho
 
 In this version, all CRUD operations are accessible without permission checks. This approach facilitates learning and understanding the fundamental concepts of Node.js development.
 
+## Version 2.0 Details
+
+In this version, the following enhancements are implemented:
+
+- **JWT Protection**: CRUD operations are now protected with JWT authentication to ensure secure access.
+- **Password Management**: Added functionality for forgotten password and reset password.
+- **Admin Dashboard**: Admins can now perform user CRUD operations, including user management functionalities.
+- **User Profile**: Users can view and update their profiles.
+- **Account Management**: Users have the ability to deactivate their account or delete it.
+- **Book Details**: Users can view specific book details.
+
 ## Future Enhancements
 
-Future updates will include implementing permission controls to restrict book management functionalities to authorized users (i.e., bookshop owners). Regular users will continue to have access to view-only capabilities.
+Future updates will include further improvements to the user management system and additional features to enhance the book management experience.
 
 ## Postman Documentation
 
