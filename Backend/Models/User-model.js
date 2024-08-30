@@ -79,7 +79,7 @@ userScema.pre("save", async function (next) {
 });
 // filter user that have isActive false
 userScema.pre(/^find/, function (next) {
-  this.find({ isActive: true });
+  this.find({ isActive: { $ne: false } });
   next();
 });
 //check password

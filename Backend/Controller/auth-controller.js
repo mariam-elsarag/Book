@@ -32,6 +32,16 @@ const verifyToken = async (token) => {
 };
 const createAndSendToken = (user, statusCode, res) => {
   const token = generateToken(user);
+  const cookiesOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIES_EXPIRE_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === "production") {
+    cookiesOptions.secure = true;
+  }
+  res.cookie("jwt", token, cookiesOptions);
   res.status(statusCode).json({
     status: httpStatusText.SUCCESS,
     token,
