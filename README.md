@@ -8,17 +8,17 @@ This project is a simple book website developed using Node.js. It allows booksho
 
 ### Backend
 
-- **Node.js**: A JavaScript runtime built on Chrome's V8 JavaScript engine.
-- **Express**: A web application framework for Node.js, providing a robust set of features for web and mobile applications.
-- **Mongoose**: An ODM (Object Data Modeling) library for MongoDB and Node.js.
+- **Node.js**
+- **Express**
+- **Mongoose**
 
 ### Frontend
 
-- **React.js**: A JavaScript library for building user interfaces, developed by Facebook.
-- **Tailwind CSS**: A utility-first CSS framework for creating custom designs without leaving your HTML.
-- **Redux**: A state management library for JavaScript applications, often used with React.
-- **Sass**: A CSS preprocessor that extends CSS with variables, nested rules, and more.
-- **PrimeReact**: A collection of rich UI components for React.
+- **React.js**
+- **Tailwind CSS**
+- **Redux**
+- **Sass**
+- **PrimeReact**
 
 ## Features
 
