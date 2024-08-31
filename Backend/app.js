@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const cron = require("node-cron");
 const limitRate = require("express-rate-limit");
+const helmet = require("helmet");
 
 // utils
 const httpStatusText = require("./utils/httpStatusText");
@@ -19,13 +20,15 @@ const app = express();
 // controller
 const GlobalErrorHandler = require("./Controller/error-controller");
 
-// body
-app.use(express.json());
+// set security HTTP headers
+app.use(helmet());
+// body parser, reading data from body into req.body limit body for 10 kb
+app.use(express.json({ limit: "10kb" }));
 // cors
 app.use(cors());
 //corn
 
-// limit rate
+// limit request from same api
 const limiter = limitRate({
   max: 300,
   windowMs: 60 * 60 * 1000,
