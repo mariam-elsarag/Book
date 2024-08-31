@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cron = require("node-cron");
+const limitRate = require("express-rate-limit");
 
 // utils
 const httpStatusText = require("./utils/httpStatusText");
@@ -24,6 +25,13 @@ app.use(express.json());
 app.use(cors());
 //corn
 
+// limit rate
+const limiter = limitRate({
+  max: 300,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many requests from this IP, Please try again in an hour!",
+});
+app.use("/api", limiter);
 // Routes
 app.use("/api/book", bookRoute);
 app.use("/api/auth", authRoute);
