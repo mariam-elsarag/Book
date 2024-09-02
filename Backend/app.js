@@ -3,6 +3,9 @@ const cors = require("cors");
 const cron = require("node-cron");
 const limitRate = require("express-rate-limit");
 const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const hpp = require("hpp");
 
 // utils
 const httpStatusText = require("./utils/httpStatusText");
@@ -15,6 +18,7 @@ const bookRoute = require("./Routes/book-route");
 const authRoute = require("./Routes/auth-route");
 const userRoute = require("./Routes/user-route");
 const adminRoute = require("./Routes/admin-route");
+const reviewRoute = require("./Routes/review-route");
 const app = express();
 
 // controller
@@ -24,6 +28,13 @@ const GlobalErrorHandler = require("./Controller/error-controller");
 app.use(helmet());
 // body parser, reading data from body into req.body limit body for 10 kb
 app.use(express.json({ limit: "10kb" }));
+//Data sanitization aganist noSql injection
+app.use(mongoSanitize());
+//Data sanitization aganist xss
+app.use(xss());
+//prevent parmeter pllutuion
+// app.use(hpp({ whitelist: [] }));
+app.use(hpp());
 // cors
 app.use(cors());
 //corn
@@ -40,6 +51,7 @@ app.use("/api/book", bookRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/user", userRoute);
+app.use("/api/review", reviewRoute);
 
 // error route
 app.all("*", (req, res, next) => {
