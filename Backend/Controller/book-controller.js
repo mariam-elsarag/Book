@@ -36,11 +36,11 @@ exports.getBook = CatchAsync(async (req, res, next) => {
     Book.findById(req.params.id),
     req.query
   ).limitFields();
-  const book = await feaures.query;
+  const book = await feaures.query.populate("reviews");
   if (!book) {
     return next(new AppError("Book not found", 404));
   }
-  res.status(200).json({ book });
+  res.status(200).json(book);
 });
 
 exports.createBook = CatchAsync(async (req, res, next) => {
