@@ -119,6 +119,24 @@ exports.protect = CatchAsync(async (req, res, next) => {
   req.user = user;
   next();
 });
+// accept both header and without header
+exports.toggleAuth = CatchAsync(async (req, res, next) => {
+  const token = extractToken(req);
+  if (token) {
+    const decoded = await verifyToken(token);
+    if (!decoded)
+      return next(new AppError("Unauthorized: Access is denied", 401));
+
+    const user = await User.findById(decoded.id);
+    if (!user) return next(new AppError("User no longer exists", 404));
+    if (user.checkChangePasswordAfterJWT(decoded.iat)) {
+      return next(new AppError("User recently changed password", 404));
+    }
+
+    req.user = user;
+  }
+  next();
+});
 // authrization
 exports.restrectTo = (...roles) => {
   return (req, res, next) => {

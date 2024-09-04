@@ -8,11 +8,12 @@ const authController = require("../Controller/auth-controller");
 
 // rotue
 const reviewRoute = require("./review-route");
+const favoriteRoute = require("./favorite-route");
 // multer
 const upload = multer();
 router
   .route("/")
-  .get(bookController.getBooks)
+  .get(authController.toggleAuth, bookController.getBooks)
   .post(
     upload.none(),
     authController.protect,
@@ -22,7 +23,7 @@ router
 
 router
   .route("/:id")
-  .get(bookController.getBook)
+  .get(authController.toggleAuth, bookController.getBook)
   .patch(
     upload.none(),
     authController.protect,
@@ -37,5 +38,6 @@ router
 
 // reviews
 router.use("/:bookId/review", reviewRoute);
-
+// // favorite
+router.use("/:bookId/favorite", favoriteRoute);
 module.exports = router;

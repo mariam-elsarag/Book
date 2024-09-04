@@ -1,4 +1,5 @@
 const Book = require("../Models/Book-model");
+const Favorite = require("../Models/Favorite-model");
 
 const AppError = require("../utils/appError");
 const ApiFeatures = require("../utils/apiFeatures");
@@ -7,11 +8,24 @@ const CatchAsync = require("../utils/catchAsync");
 exports.getBooks = CatchAsync(async (req, res, next) => {
   const features = new ApiFeatures(Book.find(), req.query)
     .filter()
-    .limitFields()
+    .limitFields("-__v")
     .paginate();
 
   const books = await features.query;
-
+  let booksWithFavorites = books.map((book) => ({
+    ...book.toObject(),
+    isFavorite: false,
+  }));
+  if (req.user && req.user._id) {
+    const favorites = await Favorite.find({ user: req.user._id }).select(
+      "book"
+    );
+    const favoritesBook = new Set(favorites?.map((fav) => fav.book));
+    booksWithFavorites = books.map((book) => ({
+      ...book.toObject(),
+      isFavorite: favoritesBook.has(book),
+    }));
+  }
   const paginationData = await features.getPaginationData(Book);
 
   const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
@@ -27,7 +41,7 @@ exports.getBooks = CatchAsync(async (req, res, next) => {
       : null,
     count: paginationData.totalRecords,
     totalPages: paginationData.totalPages,
-    results: books,
+    results: booksWithFavorites,
   });
 });
 
@@ -35,10 +49,20 @@ exports.getBook = CatchAsync(async (req, res, next) => {
   const feaures = new ApiFeatures(
     Book.findById(req.params.id),
     req.query
-  ).limitFields();
-  const book = await feaures.query.populate("reviews");
+  ).limitFields("-__v");
+  let book = await feaures.query.populate("reviews");
   if (!book) {
     return next(new AppError("Book not found", 404));
+  }
+
+  if (req.user && req.user._id) {
+    const favorite = await Favorite.findOne({
+      book: req.params.id,
+      user: req.user._id,
+    });
+    book.isFavorite = favorite ? true : false;
+  } else {
+    book.isFavorite = false;
   }
   res.status(200).json(book);
 });
