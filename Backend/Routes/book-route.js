@@ -5,8 +5,9 @@ const router = express.Router();
 // controller
 const bookController = require("../Controller/book-controller");
 const authController = require("../Controller/auth-controller");
-const reviewController = require("../Controller/review-controller");
 
+// rotue
+const reviewRoute = require("./review-route");
 // multer
 const upload = multer();
 router
@@ -35,9 +36,6 @@ router
   );
 
 // reviews
-router
-  .route("/:bookId/review")
-  .get(authController.protect, reviewController.allReviews)
-  .post(upload.none(), authController.protect, reviewController.createReview);
+router.use("/:bookId/review", reviewRoute);
 
 module.exports = router;
