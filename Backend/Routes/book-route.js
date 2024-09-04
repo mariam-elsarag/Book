@@ -5,6 +5,7 @@ const router = express.Router();
 // controller
 const bookController = require("../Controller/book-controller");
 const authController = require("../Controller/auth-controller");
+const reviewController = require("../Controller/review-controller");
 
 // multer
 const upload = multer();
@@ -32,5 +33,11 @@ router
     authController.restrectTo("admin"),
     bookController.deleteBook
   );
+
+// reviews
+router
+  .route("/:bookId/review")
+  .get(authController.protect, reviewController.allReviews)
+  .post(upload.none(), authController.protect, reviewController.createReview);
 
 module.exports = router;

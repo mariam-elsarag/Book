@@ -8,16 +8,17 @@ const Pagination = require("../utils/Pagination");
 
 // all reviews
 exports.allReviews = catchAsync(async (req, res, next) => {
-  const features = new Pagination(1, 10, Review.find());
+  const { bookId } = req.params;
+  const features = new Pagination(1, 10, Review.find({ book: bookId }));
   const reviews = await features.getPagination(Review);
-  console.log("test", reviews);
 
   res.status(200).json({ status: httpStatusText.status, ...reviews });
 });
 
 // create review
 exports.createReview = catchAsync(async (req, res, next) => {
-  const { rate, review, book_id } = req.body;
+  const { bookId } = req.params;
+  const { rate, review } = req.body;
   let errors = [];
   if (!rate) {
     errors.push({ rate: "Rate is required" });
@@ -25,9 +26,7 @@ exports.createReview = catchAsync(async (req, res, next) => {
   if (!review) {
     errors.push({ review: "Review is required" });
   }
-  if (!book_id) {
-    errors.push({ book_id: "Book is required" });
-  }
+
   if (errors?.length > 0) {
     return next(new AppError(errors, 400));
   }
@@ -35,7 +34,7 @@ exports.createReview = catchAsync(async (req, res, next) => {
     ratting: rate,
     review,
     user: req.user._id,
-    book: book_id,
+    book: bookId,
   });
   res.status(201).json({ status: httpStatusText.SUCCESS, review: reviewData });
 });
