@@ -39,5 +39,6 @@ bookSchema.virtual("reviews", {
   foreignField: "book",
   localField: "_id",
 });
+
 const Book = mongoose.model("book", bookSchema, "books");
 module.exports = Book;

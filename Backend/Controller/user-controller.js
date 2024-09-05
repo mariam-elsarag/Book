@@ -6,7 +6,8 @@ const ApiFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const httpStatusText = require("../utils/httpStatusText");
 const filterBodyFields = require("../utils/filterBodyFields");
-
+// controller
+const factory = require("./handle-factory");
 exports.getUsers = CatchAsync(async (req, res, next) => {
   const features = new ApiFeatures(User.find(), req.query).paginate();
   const users = await features.query.select("-__v");
@@ -36,14 +37,7 @@ exports.getUser = CatchAsync(async (req, res, next) => {
   res.status(200).json({ status: httpStatusText.users, user });
 });
 // delete user
-exports.deleteUser = CatchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const user = await User.findByIdAndDelete(id);
-  if (!user) {
-    return next(new AppError("User not found", 404));
-  }
-  res.status(204).json({ status: httpStatusText.users });
-});
+exports.deleteUser = factory.deleteOne(User);
 exports.updateUser = CatchAsync(async (req, res, next) => {
   const filteredBody = filterBodyFields(
     req.body,

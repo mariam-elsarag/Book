@@ -37,7 +37,8 @@ router
   );
 
 // reviews
-router.use("/:bookId/review", reviewRoute);
+router.use("/:id/review", reviewRoute);
+
 // // favorite
 router.use("/:bookId/favorite", favoriteRoute);
 module.exports = router;

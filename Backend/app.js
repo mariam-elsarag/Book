@@ -18,6 +18,7 @@ const bookRoute = require("./Routes/book-route");
 const authRoute = require("./Routes/auth-route");
 const userRoute = require("./Routes/user-route");
 const adminRoute = require("./Routes/admin-route");
+const reviewRoute = require("./Routes/review-route");
 
 const app = express();
 

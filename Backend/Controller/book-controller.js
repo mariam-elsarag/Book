@@ -4,7 +4,8 @@ const Favorite = require("../Models/Favorite-model");
 const AppError = require("../utils/appError");
 const ApiFeatures = require("../utils/apiFeatures");
 const CatchAsync = require("../utils/catchAsync");
-
+// controller
+const Factor = require("./handle-factory");
 exports.getBooks = CatchAsync(async (req, res, next) => {
   const features = new ApiFeatures(Book.find(), req.query)
     .filter()
@@ -118,11 +119,4 @@ exports.updateBook = CatchAsync(async (req, res, next) => {
   res.status(200).json({ book: updatedBook });
 });
 
-exports.deleteBook = CatchAsync(async (req, res, next) => {
-  const deletedBook = await Book.findByIdAndDelete(req.params.id);
-  if (!deletedBook) {
-    return next(new AppError("Book not found", 404));
-  }
-
-  res.status(204).json({ data: "" });
-});
+exports.deleteBook = Factor.deleteOne(Book);
