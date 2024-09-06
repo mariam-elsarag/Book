@@ -32,6 +32,8 @@ exports.ToggleFavorite = CatchAsync(async (req, res, next) => {
 });
 
 exports.getFavorite = CatchAsync(async (req, res, next) => {
-  const favorites = await Favorite.find({ user: req.user._id });
+  const favorites = await Favorite.find({ user: req.user._id })
+    .populate("book")
+    .select("-__v");
   res.status(200).json({ status: httpStatusText.SUCCESS, favorites });
 });

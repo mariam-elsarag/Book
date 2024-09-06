@@ -66,7 +66,10 @@ exports.getBook = CatchAsync(async (req, res, next) => {
       book: req.params.id,
       user: req.user._id,
     });
-    isFavorite = favorite.book ? true : false;
+
+    if (favorite) {
+      isFavorite = favorite.book ? true : false;
+    }
   }
   res.status(200).json({
     ...book.toObject(),
