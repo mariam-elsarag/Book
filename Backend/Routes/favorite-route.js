@@ -7,5 +7,6 @@ const router = express.Router({ mergeParams: true });
 router
   .route("/")
   .patch(authController.protect, favoriteController.ToggleFavorite);
+router.route("/").get(authController.protect, favoriteController.getFavorite);
 
 module.exports = router;

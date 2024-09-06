@@ -103,6 +103,7 @@ exports.login = CatchAsync(async (req, res, next) => {
 });
 
 exports.protect = CatchAsync(async (req, res, next) => {
+  console.log("i am pro");
   const token = extractToken(req);
   if (!token) return next(new AppError("Unauthorized: Access is denied", 401));
 

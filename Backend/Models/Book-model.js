@@ -23,10 +23,6 @@ const bookSchema = new mongoose.Schema(
       min: [1000, "Published year must be after the year 1000"],
       max: [new Date().getFullYear(), "Published year cannot be in the future"],
     },
-    isFavorite: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     toJSON: { virtuals: true },

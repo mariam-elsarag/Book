@@ -17,16 +17,21 @@ exports.getBooks = CatchAsync(async (req, res, next) => {
     ...book.toObject(),
     isFavorite: false,
   }));
+
   if (req.user && req.user._id) {
     const favorites = await Favorite.find({ user: req.user._id }).select(
       "book"
     );
-    const favoritesBook = new Set(favorites?.map((fav) => fav.book));
+    const favoritesBookSet = new Set(
+      favorites.map((fav) => fav.book?._id.toString())
+    );
+
     booksWithFavorites = books.map((book) => ({
       ...book.toObject(),
-      isFavorite: favoritesBook.has(book),
+      isFavorite: favoritesBookSet.has(book._id.toString()),
     }));
   }
+
   const paginationData = await features.getPaginationData(Book);
 
   const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${
@@ -55,17 +60,18 @@ exports.getBook = CatchAsync(async (req, res, next) => {
   if (!book) {
     return next(new AppError("Book not found", 404));
   }
-
+  let isFavorite = false;
   if (req.user && req.user._id) {
     const favorite = await Favorite.findOne({
       book: req.params.id,
       user: req.user._id,
     });
-    book.isFavorite = favorite ? true : false;
-  } else {
-    book.isFavorite = false;
+    isFavorite = favorite.book ? true : false;
   }
-  res.status(200).json(book);
+  res.status(200).json({
+    ...book.toObject(),
+    isFavorite,
+  });
 });
 
 exports.createBook = CatchAsync(async (req, res, next) => {

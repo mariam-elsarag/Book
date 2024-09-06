@@ -20,8 +20,18 @@ exports.ToggleFavorite = CatchAsync(async (req, res, next) => {
       book: bookId,
     });
   } else {
+    // check if book id exist in db
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return next(new AppError("Book not found", 404));
+    }
     await Favorite.create({ user: userId, book: bookId });
     isFavorite = true;
   }
   res.status(200).json({ status: httpStatusText.SUCCESS, isFavorite });
+});
+
+exports.getFavorite = CatchAsync(async (req, res, next) => {
+  const favorites = await Favorite.find({ user: req.user._id });
+  res.status(200).json({ status: httpStatusText.SUCCESS, favorites });
 });
