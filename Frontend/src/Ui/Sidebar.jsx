@@ -1,9 +1,10 @@
 import React from "react";
 import { FaRegUser, FaBook } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { LuLogOut, LuUsers } from "react-icons/lu";
 import { FaRegCircleUser } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { resetAuth } from "../features/Auth/AuthSlice";
 
 const list = [
   { id: 0, icon: <LuUsers size={18} />, title: "Users", link: "users" },
@@ -17,7 +18,15 @@ const list = [
 ];
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { profilePic, fullName } = useSelector((store) => store.auth);
+
+  //  function
+  const handleLogout = () => {
+    dispatch(resetAuth());
+    navigate("/", { replace: true });
+  };
   return (
     <aside className="aside  bg-primary h-screen  py-8 px-3 ">
       <h1 className="flex items-center justify-center md:justify-start md:gap-2 text-white font-bold uppercase md:tracking-[5px] text-base md:text-lg mb-8">
@@ -41,7 +50,11 @@ const Sidebar = () => {
         ))}
       </ul>
       <div className="bg-white rounded-[4px] flex h-[40px] items-center gap-1 px-3">
-        <div className="flex-1  items-center gap-2 hidden sm:flex">
+        <div
+          onClick={handleLogout}
+          role="button"
+          className="flex-1  items-center gap-2 hidden sm:flex"
+        >
           {profilePic ? (
             <img
               src={profilePic}

@@ -25,8 +25,16 @@ export const AuthSlice = createSlice({
         expires: 5,
       });
     },
+    resetAuth: (state) => {
+      state.token = undefined;
+      state.profilePic = null;
+      state.fullName = null;
+      Cookies.remove("token");
+      Cookies.remove("full_name");
+      Cookies.remove("profile_img");
+    },
   },
 });
 
-export const { updateAuth } = AuthSlice.actions;
+export const { updateAuth, resetAuth } = AuthSlice.actions;
 export default AuthSlice.reducer;
