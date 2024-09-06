@@ -28,14 +28,7 @@ exports.getUsers = CatchAsync(async (req, res, next) => {
   });
 });
 // get single user
-exports.getUser = CatchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const user = await User.findById(id);
-  if (!user) {
-    return next(new AppError("User not found", 404));
-  }
-  res.status(200).json({ status: httpStatusText.users, user });
-});
+exports.getUser = factory.getOne(User);
 // delete user
 exports.deleteUser = factory.deleteOne(User);
 exports.updateUser = CatchAsync(async (req, res, next) => {
