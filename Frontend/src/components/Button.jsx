@@ -15,9 +15,9 @@ const Button = ({
 }) => {
   const base_style = `flex items-center gap-2  justify-center text-center py-1 px-2 outline-none rounded-[4px] transition-all duration-300 ease-in-out h-[40px] text-sm font-bold shadow-main-shadow hover:shadow-hover-shadow `;
   const styles = {
-    primary: `${base_style} bg-blue-950 text-white hover:bg-blue-900  `,
-    outline: `${base_style} border border-blue-950 hover:bg-blue-950 text-blue-950`,
-    white: `${base_style} text-primary rounded-full bg-white w-full hover:bg-primary hover:text-white border hover:border-white `,
+    primary: `${base_style} bg-secondary text-white hover:bg-secodary-hover  `,
+    outline: `${base_style} border border-secondary hover:bg-secondary hover:text-white text-secondary`,
+    white: `${base_style} text-secondary rounded-full bg-white w-full hover:bg-secondary hover:text-white border hover:border-white `,
   };
   if (to)
     return (

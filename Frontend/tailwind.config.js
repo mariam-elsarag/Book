@@ -4,7 +4,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#172554",
+        primary: "#0857a0",
+        "primary-hover": "#0969c3",
+        secondary: "#053866",
+        "secodary-hover": "#07467e",
       },
     },
   },

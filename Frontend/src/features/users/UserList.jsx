@@ -8,6 +8,7 @@ import { MdOutlineDelete } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Button from "../../components/Button";
 const colums = ["full_name", "email", "role"];
 const UserList = () => {
   const navigate = useNavigate();
@@ -84,13 +85,10 @@ const UserList = () => {
     <div className="grid gap-8">
       <Header title="All Users" link={"/users/list"}>
         {location.pathname.includes("/users/list") && (
-          <Link
-            to={`/users/add`}
-            className="border flex items-center gap-1 min-w-[150px] border-blue-900 hover:bg-blue-900 hover:text-white transition-all ease-in-out duration-300 text-blue-900 font-semibold rounded-[4px] text-sm  flex items-end justify-center w-fit py-2 px-5"
-          >
+          <Button to={`/users/add`} type="outline">
             <span>+</span>
             <span className="hidden sm:flex">Add User</span>
-          </Link>
+          </Button>
         )}
       </Header>
 

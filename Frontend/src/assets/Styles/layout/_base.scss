@@ -2,14 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-  --primary: #172554;
-
+  --primary: #0857a0;
+  --primary-hover: #0969c3;
+  --secondary: #053866;
+  --secondary-hover: #07467e;
   --dark-grey: #404040;
   --light-grey: #e5e7eb;
 }
 @layer utilities {
   .nav a.active {
-    @apply bg-white text-primary;
+    @apply bg-white text-secondary;
   }
 }
 @layer components {

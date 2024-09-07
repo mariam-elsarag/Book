@@ -6,7 +6,7 @@ const Header = ({ title, link, children }) => {
     <header className="flex items-center gap-2 justify-between">
       <Link
         to={link}
-        className="text-blue-900  font-bold text-lg md:text-2xl  capitalize"
+        className="text-secondary font-bold text-lg md:text-2xl  capitalize"
       >
         {title}
       </Link>

@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "primereact/resources/themes/tailwind-light/theme.css";
 import "./assets/Styles/global/style.scss";
 import { Provider } from "react-redux";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <PrimeReactProvider>

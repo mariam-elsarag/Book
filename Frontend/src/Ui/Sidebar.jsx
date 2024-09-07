@@ -28,7 +28,7 @@ const Sidebar = () => {
     navigate("/", { replace: true });
   };
   return (
-    <aside className="aside  bg-primary h-screen  py-8 px-3 ">
+    <aside className="aside  bg-secondary h-screen  py-8 px-3 ">
       <h1 className="flex items-center justify-center md:justify-start md:gap-2 text-white font-bold uppercase md:tracking-[5px] text-base md:text-lg mb-8">
         <FaBook size={18} />
         <span className="hidden md:flex">Book Shop</span>
