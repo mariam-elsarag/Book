@@ -6,6 +6,7 @@ const router = express.Router();
 // controller
 const authController = require("../Controller/auth-controller");
 const userController = require("../Controller/user-controller");
+const adminController = require("../Controller/admin-controller");
 // multer
 const upload = multer();
 router
@@ -21,7 +22,7 @@ router
     upload.none(),
     authController.protect,
     authController.restrectTo("admin"),
-    userController.createUsers
+    adminController.createUser
   );
 router
   .route("/user/:id")

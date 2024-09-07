@@ -37,10 +37,10 @@ const userScema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
       minLength: [8, "Min length for password is 8 characters"],
       select: false,
     },
+
     passwordChangedAt: Date,
     resetPasswordToken: String,
     resetPasswordExpire: Date,
@@ -112,9 +112,9 @@ userScema.methods.checkChangePasswordAfterJWT = function (jwtTimeStemp) {
   return false;
 };
 //reset token
-userScema.methods.CreateResetToken = function () {
+userScema.methods.CreateResetToken = function (expire = 10) {
   const resetToken = crypto.randomBytes(32).toString("hex");
-  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+  this.resetPasswordExpire = Date.now() + expire * 60 * 1000;
   this.resetPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)
