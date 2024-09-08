@@ -25,7 +25,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     const controller = new AbortController();
     const signal = controller.signal;
-    console.log(data, "kk");
+
     try {
       setLoading(true);
       const response = await axios.post(
@@ -71,7 +71,7 @@ const Login = () => {
     <div className="bg-neutral-50 h-screen sm:flex items-center justify-center">
       <section className="sm:grid flex flex-col justify-center sm:justify-normal gap-5 w-full h-full sm:h-auto sm:w-[400px] rounded-lg py-10 px-8 bg-white shadow">
         <header className="w-full grid gap-8">
-          <h1 className="text-blue-900 text-xl font-bold tracking-[8px] text-center w-full">
+          <h1 className="text-secondary text-xl font-bold tracking-[8px] text-center w-full">
             BOOK SHOP
           </h1>
           <p className="text-gray-400 text-sm">

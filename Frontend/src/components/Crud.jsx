@@ -20,22 +20,11 @@ const Crud = ({
   loading = false,
   loadingGetData = false,
   isSubmiting = false,
+  errors,
+  handleSubmit,
+  control,
+  dirtyFields,
 }) => {
-  const { id } = useParams();
-  const { token } = useSelector((store) => store.auth);
-
-  // use form
-  const {
-    control,
-    setError,
-    reset,
-    setValue,
-    formState: { errors, isValid, dirtyFields },
-    handleSubmit,
-    watch,
-  } = useForm({
-    mode: "onChange",
-  });
   // function
   useEffect(() => {
     if (location.pathname.includes("edit")) {
@@ -67,16 +56,20 @@ const Crud = ({
               rules={item.validator}
               render={({ field, fieldState: { error } }) =>
                 item?.type === "input" ? (
-                  <Input
-                    id={item?.id}
-                    label={item?.label}
-                    type={item?.inputType}
-                    placeholder={item?.placeholder}
-                    error={error?.message}
-                    handleChange={field.onChange}
-                    value={field.value}
-                    disabled={isSubmiting}
-                  />
+                  <>
+                    <Input
+                      id={item?.id}
+                      label={item?.label}
+                      type={item?.inputType}
+                      placeholder={item?.placeholder}
+                      error={
+                        error?.message || errors?.[item.fieldName]?.message
+                      }
+                      handleChange={field.onChange}
+                      value={field.value}
+                      disabled={isSubmiting}
+                    />
+                  </>
                 ) : (
                   <div className="grid gap-2">
                     <label htmlFor={item?.label}>{item?.label}</label>
@@ -89,7 +82,11 @@ const Crud = ({
                       optionLabel="name"
                       onChange={field.onChange}
                       value={field.value}
-                      className="input !py-0"
+                      className={` input !py-0  ${
+                        error?.message || errors?.[item.fieldName]?.message
+                          ? "border-red-700"
+                          : ""
+                      }`}
                       placeholder={item?.placeholder}
                     />
                   </div>

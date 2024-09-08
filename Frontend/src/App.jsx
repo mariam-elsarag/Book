@@ -33,7 +33,7 @@ const App = () => {
               <Route index element={<Navigate to="list" replace />} />
               <Route path="list" element={<User_List />} />
               <Route path="add" element={<User_Crud />} />
-              <Route path=":id/eidt" element={<User_Crud />} />
+              <Route path=":id/edit" element={<User_Crud />} />
             </Route>
             <Route path="book" element={<BookContainer />}>
               <Route index element={<Navigate to="all" replace />} />

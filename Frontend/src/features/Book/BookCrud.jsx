@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import Input from "../../components/Input";
-import { Link, useParams } from "react-router-dom";
+// lib
 import axios from "axios";
-import Spinner from "../../Ui/Spinner";
-import SpinnerFullPage from "../../Ui/SpinnerFullPage";
-import { useSelector } from "react-redux";
-import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-const apiKey = import.meta.env.VITE_REACT_APP_BASE_URL;
+import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
+
+// component
+import Spinner from "../../Ui/Spinner";
+import Input from "../../components/Input";
+import SpinnerFullPage from "../../Ui/SpinnerFullPage";
+import Crud from "../../components/Crud";
 
 const BookCrud = () => {
   const { id } = useParams();
@@ -15,6 +18,7 @@ const BookCrud = () => {
 
   const [loading, setLoading] = useState(false);
   const [loadingBook, setLoadingBook] = useState(false);
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const {
     control,
     setError,
@@ -32,9 +36,54 @@ const BookCrud = () => {
     },
     mode: "onChange",
   });
-  const all = watch();
+  const list = [
+    {
+      id: 1,
+      type: "input",
+      fieldName: "title",
+      label: "Title",
+      inputType: "text",
+      placeholder: "Enter book title",
+      validator: {
+        required: "Title is required",
+      },
+    },
+    {
+      id: 2,
+      type: "input",
+      fieldName: "author",
+      label: "Author",
+      inputType: "text",
+      placeholder: "Enter author name",
+      validator: {
+        required: "Author name is required",
+      },
+    },
+    {
+      id: 3,
+      type: "input",
+      fieldName: "price",
+      label: "Price",
+      inputType: "number",
+      placeholder: "Enter book price",
+      validator: {
+        required: "Price is required",
+      },
+    },
+    {
+      id: 4,
+      type: "input",
+      fieldName: "published_year",
+      label: "Published year",
+      inputType: "number",
+      placeholder: "Enter published year of the book",
+      validator: {
+        required: "published year is required",
+      },
+    },
+  ];
 
-  // in edit page get book
+  // in book data
   const getBook = async () => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -60,15 +109,11 @@ const BookCrud = () => {
       setLoadingBook(false);
     }
   };
-  useEffect(() => {
-    if (location.pathname.includes("edit")) {
-      getBook();
-    }
-  }, []);
-
+  // handle submit book
   const onSubmit = async (data) => {
     try {
       setLoading(true);
+      setIsSubmiting(true);
       const response = await axios.post(`${apiKey}/api/book/`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -82,10 +127,11 @@ const BookCrud = () => {
       console.log("error", err);
     } finally {
       setLoading(false);
+      setIsSubmiting(false);
     }
   };
 
-  // for update data
+  // for update book
   const updateData = async (data) => {
     try {
       setLoading(true);
@@ -109,109 +155,22 @@ const BookCrud = () => {
     }
   };
 
-  if (loadingBook) return <SpinnerFullPage />;
   return (
-    <div className="grid gap-8">
-      <header className="flex items-center gap-2 justify-between">
-        <Link
-          to={"/book/all"}
-          className="text-blue-900  font-bold text-lg md:text-2xl  capitalize "
-        >
-          {location.pathname.includes("edit") ? "Edit Book" : "Add New Book"}
-        </Link>
-      </header>
-      <form
-        onSubmit={handleSubmit(
-          location.pathname.includes("edit") ? updateData : onSubmit
-        )}
-        className="grid gap-4"
-      >
-        <Controller
-          name="title"
-          rules={{ required: "Title is required" }}
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              id="title"
-              label="Title"
-              type="text"
-              placeholder="Enter book title"
-              error={errors?.title?.message}
-              handleChange={field.onChange}
-              value={field.value}
-            />
-          )}
-        />
-        <Controller
-          name="author"
-          rules={{ required: "Author is required" }}
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              id="author"
-              label="Author"
-              type="text"
-              placeholder="Enter book author"
-              error={errors?.author?.message}
-              handleChange={field.onChange}
-              value={field.value}
-            />
-          )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4  items-start">
-          <Controller
-            name="published_year"
-            rules={{ required: "Published year is required" }}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                id="published_year"
-                type="number"
-                label="Published Year"
-                placeholder="Enter book Published Year"
-                error={errors?.published_year?.message}
-                handleChange={field.onChange}
-                value={field.value}
-              />
-            )}
-          />
-          <Controller
-            name="price"
-            rules={{ required: "Price is required" }}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                id="price"
-                label="Price"
-                type="number"
-                placeholder="Enter book Price"
-                error={errors?.price?.message}
-                handleChange={field.onChange}
-                value={field.value}
-              />
-            )}
-          />
-        </div>
-        <div className="flex items-center justify-end gap-4">
-          <Link
-            to="/book/all"
-            className="border border-blue-900 px-4 h-[38px] flex items-center justify-center text-blue-900 rounded-[4px] capitalize text-sm transition-all ease-in-out duration-300 hover:bg-blue-900 hover:text-white "
-          >
-            view all
-          </Link>
-          <button
-            type="submit"
-            disabled={
-              Object.keys(dirtyFields)?.length > 0 ? false : true || loading
-            }
-            className=" disabled:bg-white disabled:text-gray-400 disabled:shadow-sm disabled:border-gray-400 flex items-center gap-2 outline-none shadow-none bg-blue-900 text-white text-sm border border-blue-900 hover:bg-white hover:text-blue-900 hover:border-blue-900 transition-all duration-300 ease-in-out px-4 h-[38px] rounded-[4px]"
-          >
-            Submit
-            {loading && <Spinner className="w-[18px] h-[18px]" />}
-          </button>
-        </div>
-      </form>
+    <div>
+      <Crud
+        submitFunction={onSubmit}
+        formList={list}
+        updateFunction={updateData}
+        getFunction={getBook}
+        isSubmiting={isSubmiting}
+        errors={errors}
+        loading={loadingBook}
+        loadingGetData={loading}
+        handleSubmit={handleSubmit}
+        control={control}
+        dirtyFields={dirtyFields}
+        allDataLink="/book/all"
+      />
     </div>
   );
 };
