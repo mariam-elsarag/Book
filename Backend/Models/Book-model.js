@@ -7,7 +7,11 @@ const bookSchema = new mongoose.Schema(
       required: [true, "Book title is required"],
       maxlength: [100, "You exceed max length for title, 100 characters"],
     },
-    genre: { type: mongoose.Schema.ObjectId, ref: "Genre" },
+    genre: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Genre",
+      require: [true, "Book genre is required"],
+    },
     author: {
       type: String,
       required: [true, "Author name is required"],

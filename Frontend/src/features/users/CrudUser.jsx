@@ -71,7 +71,7 @@ const CrudUser = () => {
       },
     },
     {
-      id: 3,
+      id: 4,
       label: "Role",
       type: "dropdown",
       fieldName: "role",

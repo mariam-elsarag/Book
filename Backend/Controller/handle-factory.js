@@ -41,7 +41,16 @@ exports.getData = (Model, populateOption) =>
 exports.createOne = (Model, filterData) =>
   CatchAsync(async (req, res, next) => {
     const filterBody = filterBodyFields(req.body, filterData);
-    console.log(filterData, "filter data");
+    let errors = {};
+
+    filterData.forEach((el) => {
+      if (!filterBody.hasOwnProperty(el) || !filterBody[el]) {
+        errors[el] = `${el} is required`;
+      }
+    });
+    if (Object.keys(errors).length > 0) {
+      return next(new AppError(errors, 400));
+    }
     const doc = await Model.create({ ...filterBody });
 
     res.status(201).json({ data: doc });

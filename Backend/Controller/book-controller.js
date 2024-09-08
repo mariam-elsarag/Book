@@ -88,50 +88,40 @@ exports.createBook = CatchAsync(async (req, res, next) => {
     "genre"
   );
 
-  if (
-    !filterBody.title ||
-    !filterBody.author ||
-    !filterBody.price ||
-    filterBody.genre
-  ) {
-    if (!filterBody.title) {
-      next(new AppError("Title is required", 400));
+  const listData = ["title", "author", "price", "published_year", "genre"];
+  let errors = {};
+
+  listData.forEach((el) => {
+    if (!filterBody.hasOwnProperty(el) || !filterBody[el]) {
+      errors[el] = `${el} is required`;
     }
-    if (!filterBody.author) {
-      next(new AppError("Author is required", 400));
-    }
-    if (!filterBody.price) {
-      next(new AppError("Price is required", 400));
-    }
-    if (!filterBody.published_year) {
-      next(new AppError("Published year is required", 400));
-    }
-    if (!filterBody.genre) {
-      next(new AppError("Genre is required", 400));
-    }
-    return;
-  } else {
-    const book = await Book.create({
-      title: filterBody.title,
-      author: filterBody.author,
-      price: filterBody.price,
-      published_year: filterBody.published_year,
-      genre: filterBody.genre,
-    });
-    res.status(201).json({ data: book });
+  });
+
+  if (Object.keys(errors).length > 0) {
+    return next(new AppError(errors, 400));
   }
+  const book = await Book.create({
+    title: filterBody.title,
+    author: filterBody.author,
+    price: filterBody.price,
+    published_year: filterBody.published_year,
+    genre: filterBody.genre,
+  });
+  res.status(201).json({ data: book });
 });
 
 exports.updateBook = CatchAsync(async (req, res, next) => {
-  const updateData = {};
-  const acceptableFields = ["title", "author", "price", "published_year"];
-  acceptableFields.forEach((field) => {
-    if (req.body[field] !== undefined) {
-      updateData[field] = req.body[field];
-    }
-  });
+  const filterBody = filterBodyFields(
+    req.body,
+    "title",
+    "author",
+    "price",
+    "published_year",
+    "genre"
+  );
+
   const features = new ApiFeatures(
-    Book.findByIdAndUpdate(req.params.id, updateData, {
+    Book.findByIdAndUpdate(req.params.id, filterBody, {
       new: true,
       runValidators: true,
     }),

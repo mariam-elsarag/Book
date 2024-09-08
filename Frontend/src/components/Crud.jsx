@@ -8,6 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import SpinnerFullPage from "../Ui/SpinnerFullPage";
 import Input from "./Input";
 import { Dropdown } from "primereact/dropdown";
+import Spinner from "../Ui/Spinner";
 
 const Crud = ({
   getFunction,

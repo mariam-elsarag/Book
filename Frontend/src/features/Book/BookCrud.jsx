@@ -3,22 +3,24 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 
 // component
-import Spinner from "../../Ui/Spinner";
-import Input from "../../components/Input";
-import SpinnerFullPage from "../../Ui/SpinnerFullPage";
+
 import Crud from "../../components/Crud";
+import useGetData from "./../../hooks/useGetData";
+import { apiKey } from "../../utils/helper";
 
 const BookCrud = () => {
   const { id } = useParams();
   const { token } = useSelector((store) => store.auth);
-
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [loadingBook, setLoadingBook] = useState(false);
   const [isSubmiting, setIsSubmiting] = useState(false);
+  // book genres
+  const { data: genreList } = useGetData("/api/genre/");
   const {
     control,
     setError,
@@ -81,6 +83,17 @@ const BookCrud = () => {
         required: "published year is required",
       },
     },
+    {
+      id: 5,
+      label: "Book Genre",
+      type: "dropdown",
+      fieldName: "genre",
+      listData: genreList?.data?.map((item) => ({
+        name: item?.title,
+        value: item?._id,
+      })),
+      placeholder: "Select book genre ",
+    },
   ];
 
   // in book data
@@ -96,11 +109,13 @@ const BookCrud = () => {
         },
         signal,
       });
-      const fetchedData = await response.data.book;
+      const fetchedData = await response.data;
+
       setValue("title", fetchedData.title);
       setValue("author", fetchedData.author);
       setValue("published_year", fetchedData.published_year);
       setValue("price", fetchedData.price);
+      setValue("genre", fetchedData.genre._id);
     } catch (error) {
       console.error("Error fetching data:", error);
 
@@ -143,6 +158,7 @@ const BookCrud = () => {
 
       if (response.status === 200) {
         toast.success("Successully edit book data");
+        navigate("/book/all");
         setValue("title", response.data.book.title);
         setValue("author", response.data.book.author);
         setValue("published_year", response.data.book.published_year);

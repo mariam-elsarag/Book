@@ -24,7 +24,7 @@ const BookTable = () => {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    if (next || previous) {
+    if (next || previous || endpoint) {
       try {
         setLoading(true);
         const Endpoint = endpoint ? endpoint : next;
