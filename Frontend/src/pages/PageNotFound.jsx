@@ -17,7 +17,7 @@ const PageNotFound = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen flex flex-col gap-3 justify-center bg-[#fafafa] items-center">
+    <div className="w-full h-full flex flex-col gap-3 justify-center bg-[#fafafa] items-center">
       <dotlottie-player
         src="https://lottie.host/dd5ec855-fd7e-4e6b-bb8a-ce5006b3134b/SOrYxnHqzZ.json"
         background="transparent"

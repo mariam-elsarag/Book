@@ -41,6 +41,7 @@ const App = () => {
               <Route path="add" element={<AddBook />} />
               <Route path=":id/edit" element={<AddBook />} />
             </Route>
+            <Route path="*" element={<PageNotFound />} />
           </Route>
         ) : (
           <Route path="/" element={<Login />} />
