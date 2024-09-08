@@ -32,12 +32,23 @@ exports.getUser = factory.getOne(User);
 // delete user
 exports.deleteUser = factory.deleteOne(User);
 exports.updateUser = CatchAsync(async (req, res, next) => {
-  const filteredBody = filterBodyFields(
-    req.body,
-    "first_name",
-    "last_name",
-    "email"
-  );
+  let filteredBody;
+  if (req.user?.role === "admin") {
+    filteredBody = filterBodyFields(
+      req.body,
+      "first_name",
+      "last_name",
+      "email",
+      "role"
+    );
+  } else {
+    filteredBody = filterBodyFields(
+      req.body,
+      "first_name",
+      "last_name",
+      "email"
+    );
+  }
 
   const user = await User.findByIdAndUpdate(req.params.id, filteredBody, {
     new: true,

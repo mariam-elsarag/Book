@@ -4,6 +4,7 @@ const Favorite = require("../Models/Favorite-model");
 const AppError = require("../utils/appError");
 const ApiFeatures = require("../utils/apiFeatures");
 const CatchAsync = require("../utils/catchAsync");
+const filterBodyFields = require("../utils/filterBodyFields");
 // controller
 const Factor = require("./handle-factory");
 exports.getBooks = CatchAsync(async (req, res, next) => {
@@ -78,28 +79,44 @@ exports.getBook = CatchAsync(async (req, res, next) => {
 });
 
 exports.createBook = CatchAsync(async (req, res, next) => {
-  const { title, author, price, published_year } = req.body;
+  const filterBody = filterBodyFields(
+    req.body,
+    "title",
+    "author",
+    "price",
+    "published_year",
+    "genre"
+  );
 
-  if (!title || !author || !price) {
-    if (!title) {
+  if (
+    !filterBody.title ||
+    !filterBody.author ||
+    !filterBody.price ||
+    filterBody.genre
+  ) {
+    if (!filterBody.title) {
       next(new AppError("Title is required", 400));
     }
-    if (!author) {
+    if (!filterBody.author) {
       next(new AppError("Author is required", 400));
     }
-    if (!price) {
+    if (!filterBody.price) {
       next(new AppError("Price is required", 400));
     }
-    if (!published_year) {
+    if (!filterBody.published_year) {
       next(new AppError("Published year is required", 400));
+    }
+    if (!filterBody.genre) {
+      next(new AppError("Genre is required", 400));
     }
     return;
   } else {
     const book = await Book.create({
-      title: title,
-      author: author,
-      price: price,
-      published_year: published_year,
+      title: filterBody.title,
+      author: filterBody.author,
+      price: filterBody.price,
+      published_year: filterBody.published_year,
+      genre: filterBody.genre,
     });
     res.status(201).json({ data: book });
   }

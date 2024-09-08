@@ -19,6 +19,7 @@ const authRoute = require("./Routes/auth-route");
 const userRoute = require("./Routes/user-route");
 const adminRoute = require("./Routes/admin-route");
 const favoriteRoute = require("./Routes/favorite-route");
+const genreRoute = require("./Routes/genre-route");
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/user", userRoute);
 app.use("/api/favorite", favoriteRoute);
+app.use("/api/genre", genreRoute);
 
 // error route
 app.all("*", (req, res, next) => {

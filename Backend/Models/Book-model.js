@@ -5,9 +5,9 @@ const bookSchema = new mongoose.Schema(
     title: {
       type: String,
       required: [true, "Book title is required"],
-
       maxlength: [100, "You exceed max length for title, 100 characters"],
     },
+    genre: { type: mongoose.Schema.ObjectId, ref: "Genre" },
     author: {
       type: String,
       required: [true, "Author name is required"],
@@ -35,6 +35,11 @@ bookSchema.virtual("reviews", {
   foreignField: "book",
   localField: "_id",
 });
-
+bookSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "genre",
+  });
+  next();
+});
 const Book = mongoose.model("book", bookSchema, "books");
 module.exports = Book;

@@ -24,8 +24,9 @@ exports.createUser = CatchAsync(async (req, res, next) => {
   if (errors.length > 0) {
     return next(new AppError(errors, 400));
   }
-  const user = await User.create(filterBody);
+
   // send email to user
+  const user = req.user;
   // 1- generate token
   const resetToken = user.CreateResetToken(24 * 60);
   await user.save({ validateBeforeSave: false });
@@ -41,7 +42,7 @@ exports.createUser = CatchAsync(async (req, res, next) => {
   try {
     // Send the email
     await sendEmail({
-      email,
+      email: filterBody.email,
       subject: "Create new passowrd Reset",
       html,
     });
@@ -57,6 +58,7 @@ exports.createUser = CatchAsync(async (req, res, next) => {
       )
     );
   }
+  await User.create(filterBody);
   res.status(201).json({
     message: "Reset password is send",
   });

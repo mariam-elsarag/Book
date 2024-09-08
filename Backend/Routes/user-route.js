@@ -27,11 +27,6 @@ router
     authController.checkUserId,
     userController.deleteUser
   )
-  .patch(
-    upload.none(),
-    authController.protect,
-    authController.checkUserId,
-    userController.updateUser
-  );
+  .patch(upload.none(), authController.protect, userController.updateUser);
 
 module.exports = router;

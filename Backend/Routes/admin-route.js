@@ -31,6 +31,12 @@ router
     authController.restrectTo("admin"),
     userController.getUser
   )
+  .patch(
+    upload.none(),
+    authController.protect,
+    authController.restrectTo("admin"),
+    userController.updateUser
+  )
   .delete(
     authController.protect,
     authController.restrectTo("admin"),

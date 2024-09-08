@@ -1,6 +1,7 @@
 // utils
 const CatchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const filterBodyFields = require("../utils/filterBodyFields");
 
 exports.deleteOne = (Model) => {
   return CatchAsync(async (req, res, next) => {
@@ -24,4 +25,24 @@ exports.getOne = (Model, populateOption) =>
       return next(new AppError("Not found", 404));
     }
     res.status(200).json({ data: doc });
+  });
+exports.getData = (Model, populateOption) =>
+  CatchAsync(async (req, res, next) => {
+    let query = Model.find();
+    if (populateOption) {
+      query = query.populate(populateOption);
+    }
+    const doc = await query.select("-__v");
+    if (!doc) {
+      return next(new AppError("Not found", 404));
+    }
+    res.status(200).json({ data: doc });
+  });
+exports.createOne = (Model, filterData) =>
+  CatchAsync(async (req, res, next) => {
+    const filterBody = filterBodyFields(req.body, filterData);
+    console.log(filterData, "filter data");
+    const doc = await Model.create({ ...filterBody });
+
+    res.status(201).json({ data: doc });
   });
