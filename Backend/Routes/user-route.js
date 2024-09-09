@@ -9,24 +9,12 @@ const userController = require("../Controller/user-controller");
 
 // multer
 const upload = multer();
-
+router.use(authController.protect);
+router.route("/").get(authController.getMe, userController.getUser);
 router
   .route("/:id")
-  .get(
-    authController.protect,
-    authController.checkUserId,
-    userController.getUser
-  )
-  .patch(
-    authController.protect,
-    authController.checkUserId,
-    userController.deActivateUser
-  )
-  .delete(
-    authController.protect,
-    authController.checkUserId,
-    userController.deleteUser
-  )
-  .patch(upload.none(), authController.protect, userController.updateUser);
+  .patch(userController.deActivateUser)
+  .delete(userController.deleteUser)
+  .patch(upload.none(), userController.updateUser);
 
 module.exports = router;

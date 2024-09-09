@@ -28,7 +28,10 @@ exports.getUsers = CatchAsync(async (req, res, next) => {
   });
 });
 // get single user
-exports.getUser = factory.getOne(User);
+exports.getUser = factory.getOne(User, [
+  "resetPasswordExpire",
+  "resetPasswordToken",
+]);
 // delete user
 exports.deleteUser = factory.deleteOne(User);
 exports.updateUser = CatchAsync(async (req, res, next) => {

@@ -153,18 +153,11 @@ exports.restrectTo = (...roles) => {
   };
 };
 
-// to check if this same user
-exports.checkUserId = CatchAsync(async (req, res, next) => {
-  const { id } = req.params;
-
-  if (req.user.id !== id) {
-    return next(
-      new AppError("You are not authorized to perform this action", 401)
-    );
-  }
-  return next();
+// to set my user id to param
+exports.getMe = CatchAsync(async (req, res, next) => {
+  req.params.id = req.user._id;
+  next();
 });
-
 // forget password
 exports.forgetPassword = CatchAsync(async (req, res, next) => {
   const { email } = req.body;
