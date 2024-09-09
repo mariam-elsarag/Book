@@ -10,6 +10,7 @@ const handleDuplicateKeyDb = (err) => {
   const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
   const fieldWithSuffix = err.message.match(/index:\s([a-zA-Z0-9_]+)/)[1]; // Extracts field name with possible suffix
   const field = fieldWithSuffix.replace(/_1$/, "");
+
   const message = `Duplicate ${field} value: ${value}`;
   return new AppError(message, 400);
 };

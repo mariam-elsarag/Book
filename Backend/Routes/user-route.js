@@ -13,8 +13,8 @@ router.use(authController.protect);
 router.route("/").get(authController.getMe, userController.getUser);
 router
   .route("/:id")
-  .patch(userController.deActivateUser)
   .delete(userController.deleteUser)
   .patch(upload.none(), userController.updateUser);
 
+router.route("/:id/deactivate").patch(userController.deActivateUser);
 module.exports = router;

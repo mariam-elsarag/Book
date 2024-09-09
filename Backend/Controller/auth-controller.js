@@ -91,9 +91,9 @@ exports.login = CatchAsync(async (req, res, next) => {
     "+password -__v +isActive +deActiveTime "
   );
   if (!user || !(await user.checkPassword(password, user.password))) {
-    console.log("roma tyr");
     return next(new AppError("Email or password is incorrect", 401));
   }
+  console.log(user.isActive, "roam");
   // if user is deactive and try to activate account again
   if (!user.isActive) {
     user.isActive = true;

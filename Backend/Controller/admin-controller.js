@@ -26,9 +26,10 @@ exports.createUser = CatchAsync(async (req, res, next) => {
   }
 
   // send email to user
-  const user = req.user;
+  const user = await User.create(filterBody);
   // 1- generate token
   const resetToken = user.CreateResetToken(24 * 60);
+
   await user.save({ validateBeforeSave: false });
   const resetURL = `${process.env.FRONT_SERVER}/create-password/${resetToken}`;
 
@@ -47,7 +48,6 @@ exports.createUser = CatchAsync(async (req, res, next) => {
       html,
     });
   } catch (err) {
-    console.log(err, "err");
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
@@ -58,8 +58,9 @@ exports.createUser = CatchAsync(async (req, res, next) => {
       )
     );
   }
-  await User.create(filterBody);
+
   res.status(201).json({
     message: "Reset password is send",
+    resetToken,
   });
 });
