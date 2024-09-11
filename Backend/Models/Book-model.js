@@ -27,6 +27,16 @@ const bookSchema = new mongoose.Schema(
       min: [1000, "Published year must be after the year 1000"],
       max: [new Date().getFullYear(), "Published year cannot be in the future"],
     },
+    ratingAverage: {
+      type: Number,
+      default: 0,
+      min: [0, "Rating must be at least 1"],
+      max: [5, "Rating must be below 5"],
+    },
+    ratingQuantity: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     toJSON: { virtuals: true },

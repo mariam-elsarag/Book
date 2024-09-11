@@ -11,30 +11,24 @@ const reviewRoute = require("./review-route");
 const favoriteRoute = require("./favorite-route");
 // multer
 const upload = multer();
-router
-  .route("/")
-  .get(authController.toggleAuth, bookController.getBooks)
-  .post(
-    upload.none(),
-    authController.protect,
-    authController.restrectTo("admin"),
-    bookController.createBook
-  );
+router.use(authController.protect);
+router.route("/").get(authController.toggleAuth, bookController.getBooks).post(
+  upload.none(),
+
+  authController.restrectTo("admin"),
+  bookController.createBook
+);
 
 router
   .route("/:id")
   .get(authController.toggleAuth, bookController.getBook)
   .patch(
     upload.none(),
-    authController.protect,
+
     authController.restrectTo("admin"),
     bookController.updateBook
   )
-  .delete(
-    authController.protect,
-    authController.restrectTo("admin"),
-    bookController.deleteBook
-  );
+  .delete(authController.restrectTo("admin"), bookController.deleteBook);
 
 // reviews
 router.use("/:id/review", reviewRoute);

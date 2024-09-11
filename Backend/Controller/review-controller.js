@@ -32,7 +32,7 @@ exports.createReview = catchAsync(async (req, res, next) => {
     return next(new AppError(errors, 400));
   }
   const reviewData = await Review.create({
-    ratting: rate,
+    rating: rate,
     review,
     user: req.user._id,
     book: id,
