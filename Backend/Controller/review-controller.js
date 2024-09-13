@@ -50,6 +50,6 @@ exports.deleteReview = catchAsync(async (req, res, next) => {
       new AppError("You are not authorized to delete this review.", 401)
     );
   }
-  await Review.calcAverageRating(userReview.book);
+
   res.status(204).json({ data: null });
 });

@@ -64,6 +64,16 @@ reviewScema.statics.calcAverageRating = async function (bookId) {
 reviewScema.post("save", function () {
   this.constructor.calcAverageRating(this.book);
 });
+// to update book review when delete or update
+// to get document case this her refer to query not docs
+reviewScema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.clone().findOne();
+  next();
+});
+// to calc average
+reviewScema.post(/^findOneAnd/, async function () {
+  await this.r.constructor.calcAverageRating(this.r.book);
+});
 
 reviewScema.pre(/^find/, function (next) {
   this.populate({
