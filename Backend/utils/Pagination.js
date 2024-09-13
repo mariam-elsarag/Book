@@ -13,8 +13,8 @@ class Pagination {
     ]);
     const totalPages = Math.ceil(count / this.limit);
     return {
-      hasNextPage: this.currentPage < totalPages,
-      hasPrevPage: this.currentPage > 1,
+      next: this.currentPage < totalPages,
+      prev: this.currentPage > 1,
       currentPage: this.currentPage,
       totalPages,
       count,

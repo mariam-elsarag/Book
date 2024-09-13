@@ -5,6 +5,7 @@ const router = express.Router();
 // controller
 const bookController = require("../Controller/book-controller");
 const authController = require("../Controller/auth-controller");
+const reviewController = require("../Controller/review-controller");
 
 // rotue
 const reviewRoute = require("./review-route");

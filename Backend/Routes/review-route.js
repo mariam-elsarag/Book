@@ -17,7 +17,10 @@ router
     authController.protect,
     authController.restrectTo("user"),
     reviewController.createReview
-  )
+  );
+
+router
+  .route("/:id")
   .delete(authController.protect, reviewController.deleteReview);
 
 module.exports = router;

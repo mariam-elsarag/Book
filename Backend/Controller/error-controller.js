@@ -62,7 +62,6 @@ const sendErrorForPro = (err, res) => {
     res
       .status(500)
       .json({ status: err.status, message: "Something went wrong" });
-    console.log(first);
   }
 };
 

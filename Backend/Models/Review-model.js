@@ -37,7 +37,7 @@ const reviewScema = new mongoose.Schema(
 );
 // to calc average rating
 reviewScema.statics.calcAverageRating = async function (bookId) {
-  const book = await this.aggregate([
+  const stats = await this.aggregate([
     {
       $match: { book: bookId },
     },
@@ -49,19 +49,22 @@ reviewScema.statics.calcAverageRating = async function (bookId) {
       },
     },
   ]);
-
-  const test = await Book.findByIdAndUpdate(
-    bookId,
-    {
-      ratingQuantity: book[0].nRating,
-      ratingAverage: book[0].avgRating,
-    },
-    { new: true }
-  );
+  if (stats.length > 0) {
+    await Book.findByIdAndUpdate(bookId, {
+      ratingQuantity: stats[0].nRating,
+      ratingAverage: stats[0].avgRating,
+    });
+  } else {
+    await Book.findByIdAndUpdate(bookId, {
+      ratingQuantity: 0,
+      ratingAverage: 0,
+    });
+  }
 };
 reviewScema.post("save", function () {
   this.constructor.calcAverageRating(this.book);
 });
+
 reviewScema.pre(/^find/, function (next) {
   this.populate({
     path: "user",

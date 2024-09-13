@@ -20,6 +20,7 @@ const userRoute = require("./Routes/user-route");
 const adminRoute = require("./Routes/admin-route");
 const favoriteRoute = require("./Routes/favorite-route");
 const genreRoute = require("./Routes/genre-route");
+const reviewRoute = require("./Routes/review-route");
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use("/api/admin", adminRoute);
 app.use("/api/user", userRoute);
 app.use("/api/favorite", favoriteRoute);
 app.use("/api/genre", genreRoute);
+app.use("/api/review", reviewRoute);
 
 // error route
 app.all("*", (req, res, next) => {
