@@ -1,3 +1,5 @@
+const multer = require("multer");
+const sharp = require("sharp");
 // model
 const User = require("../Models/User-model");
 // utils
@@ -8,6 +10,49 @@ const httpStatusText = require("../utils/httpStatusText");
 const filterBodyFields = require("../utils/filterBodyFields");
 // controller
 const factory = require("./handle-factory");
+
+// multer
+
+// middleware
+// for disk storage
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "../public/img/users");
+//   },
+//   filename: (req, file, cb) => {
+//     const extension = file.mimetype.split("/")[1];
+//     cb(null, `user-${req.user.id}-${Date.now()}.${extension}`);
+//   },
+// });
+// image will be save in buffer
+const multerStorage = multer.memoryStorage();
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("please upload only image", 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+exports.uploadUserImg = upload.single("profile_img");
+exports.resizeUserImg = (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+  // resize image
+  sharp(req.file.buffer)
+    .resize(300, 300)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/users/${req.file.filename}`);
+  next();
+};
+// controllers
 exports.getUsers = CatchAsync(async (req, res, next) => {
   const features = new ApiFeatures(User.find(), req.query).paginate();
   const users = await features.query.select("-__v");
@@ -35,6 +80,7 @@ exports.getUser = factory.getOne(User, [
 // delete user
 exports.deleteUser = factory.deleteOne(User);
 exports.updateUser = CatchAsync(async (req, res, next) => {
+  let id = req.user?.role === "admin" ? req.params.id : req.user.id;
   let filteredBody;
   if (req.user?.role === "admin") {
     filteredBody = filterBodyFields(
@@ -52,11 +98,18 @@ exports.updateUser = CatchAsync(async (req, res, next) => {
       "email"
     );
   }
+  if (req.file) {
+    filteredBody.profile_img = req.file.filename;
+  }
 
-  const user = await User.findByIdAndUpdate(req.params.id, filteredBody, {
+  const user = await User.findByIdAndUpdate(id, filteredBody, {
     new: true,
     runValidators: true,
-  }).select("-__v -passwordChangedAt");
+  });
+  if (!user) {
+    return next(new AppError("User Not found", 404));
+  }
+
   res.status(200).json({
     status: httpStatusText.SUCCESS,
     user,

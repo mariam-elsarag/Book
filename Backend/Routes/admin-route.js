@@ -16,6 +16,10 @@ router.route("/add-user").post(upload.none(), adminController.createUser);
 router
   .route("/user/:id")
   .get(userController.getUser)
-  .patch(upload.none(), userController.updateUser)
+  .patch(
+    userController.uploadUserImg,
+    userController.resizeUserImg,
+    userController.updateUser
+  )
   .delete(userController.deleteUser);
 module.exports = router;
