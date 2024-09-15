@@ -1,0 +1,11 @@
+.Toastify__progress-bar--info,
+.Toastify__progress-bar--success {
+  background-color: var(--primary-600) !important;
+}
+
+.Toastify__toast--success,
+.Toastify__toast--info {
+  .Toastify__toast-body .Toastify__toast-icon svg {
+    fill: var(--primary-600) !important;
+  }
+}

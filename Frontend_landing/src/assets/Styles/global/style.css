@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --primary-600: #0c6d63;
+  --primary-500: #12a493;
+  --primary-100: #d1edea;
+  --secondary-600: #f1f0ec;
+  --secondary-500: #f2f1ed;
+  --secondary-400: #f1f0ec;
+  --secondary-300: #ebeeeb;
+  --grey: #a1a1a1;
+  --error: #b50808;
+  --black: #111729;
+}
+
+@layer base {
+  ::-webkit-scrollbar {
+    @apply w-[5px] h-[5px];
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 bg-clip-padding;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-grey rounded;
+  }
+}
+@layer utilities {
+  .main_layout {
+    @apply min-h-screen flex flex-col justify-between;
+  }
+  .Container {
+    @apply container mx-auto max-w-[1440px] px-4 md:px-8 lg:px-10 xl:px-[80px];
+  }
+}
+@layer components {
+  .nav a.active {
+    @apply text-primary-600;
+  }
+  label {
+    @apply text-grey text-base font-medium;
+  }
+  .input {
+    @apply border border-gray-300 active:border-primary-600 outline-none py-1 px-2 rounded-lg focus:border-primary-600 text-primary-600 caret-primary-600  placeholder:text-grey text-sm h-[40px] w-full;
+  }
+  .input-error {
+    @apply border-error;
+  }
+}
+.hero {
+  background: linear-gradient(to right, var(--secondary-300) 0%, var(--secondary-300) 50%, #f1f0ec 50%, #f6f4f0 66.66%, #f1f0ec 66.66%, #f6f4f0 83.33%, #f1f0ec 83.33%, #f6f4f0);
+}
+
+.auth {
+  background: linear-gradient(to right, #fff 0%, #fff 50%, var(--secondary-600) 50%, var(--secondary-600));
+}
+@media (max-width: 768px) {
+  .auth {
+    background: #fff;
+  }
+}
+.auth .form-container {
+  overflow: hidden;
+  width: 500px;
+  position: relative;
+}
+@media (max-width: 991px) {
+  .auth .form-container {
+    width: 350px;
+  }
+}
+.auth .form-wrapper {
+  display: flex;
+  transition: transform 0.5s ease;
+  width: 1000px;
+  transform: translateX(0);
+}
+@media (max-width: 991px) {
+  .auth .form-wrapper {
+    width: 700px;
+  }
+}
+.auth .translate-register {
+  transform: translateX(-50%);
+}
+.auth .form {
+  width: 500px;
+  flex-shrink: 0;
+  padding: 20px;
+}
+@media (max-width: 991px) {
+  .auth .form {
+    width: 350px;
+  }
+}
+
+.swiper-container .swiper-slide {
+  width: 200px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.p-checkbox .p-checkbox-box {
+  width: 18px !important;
+  height: 18px !important;
+  border: 2px solid var(--grey);
+  border-radius: 3px !important;
+  -webkit-border-radius: 3px !important;
+  -moz-border-radius: 3px !important;
+  -ms-border-radius: 3px !important;
+  -o-border-radius: 3px !important;
+}
+.p-checkbox.p-highlight .p-checkbox-box {
+  border: 2px solid var(--primary-600);
+  background-color: var(--primary-600);
+}
+
+.Toastify__progress-bar--info,
+.Toastify__progress-bar--success {
+  background-color: var(--primary-600) !important;
+}
+
+.Toastify__toast--success .Toastify__toast-body .Toastify__toast-icon svg,
+.Toastify__toast--info .Toastify__toast-body .Toastify__toast-icon svg {
+  fill: var(--primary-600) !important;
+}/*# sourceMappingURL=style.css.map */

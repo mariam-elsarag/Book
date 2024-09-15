@@ -1,0 +1,13 @@
+.hero {
+  background: linear-gradient(
+    to right,
+    var(--secondary-300) 0%,
+    var(--secondary-300) 50%,
+    #f1f0ec 50%,
+    #f6f4f0 66.66%,
+    #f1f0ec 66.66%,
+    #f6f4f0 83.33%,
+    #f1f0ec 83.33%,
+    #f6f4f0
+  );
+}

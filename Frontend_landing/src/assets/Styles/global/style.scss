@@ -1,0 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+// Layout
+@import "../layout/base";
+// component
+@import "../component/hero";
+@import "../component/auth";
+// lib
+@import "../lib/swiper";
+@import "../lib/primereact-checkbox";
+@import "../lib/toast";

@@ -1,0 +1,40 @@
+.auth {
+  background: linear-gradient(
+    to right,
+    #fff 0%,
+    #fff 50%,
+    var(--secondary-600) 50%,
+    var(--secondary-600)
+  );
+  @media (max-width: 768px) {
+    background: #fff;
+  }
+  .form-container {
+    overflow: hidden;
+    width: 500px;
+    position: relative;
+    @media (max-width: 991px) {
+      width: 350px;
+    }
+  }
+  .form-wrapper {
+    display: flex;
+    transition: transform 0.5s ease;
+    width: 1000px;
+    transform: translateX(0);
+    @media (max-width: 991px) {
+      width: 700px;
+    }
+  }
+  .translate-register {
+    transform: translateX(-50%);
+  }
+  .form {
+    width: 500px;
+    flex-shrink: 0;
+    padding: 20px;
+    @media (max-width: 991px) {
+      width: 350px;
+    }
+  }
+}

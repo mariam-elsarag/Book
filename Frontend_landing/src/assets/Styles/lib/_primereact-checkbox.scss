@@ -1,0 +1,16 @@
+.p-checkbox {
+  .p-checkbox-box {
+    width: 18px !important;
+    height: 18px !important;
+    border: 2px solid var(--grey);
+    border-radius: 3px !important;
+    -webkit-border-radius: 3px !important;
+    -moz-border-radius: 3px !important;
+    -ms-border-radius: 3px !important;
+    -o-border-radius: 3px !important;
+  }
+  &.p-highlight .p-checkbox-box {
+    border: 2px solid var(--primary-600);
+    background-color: var(--primary-600);
+  }
+}
