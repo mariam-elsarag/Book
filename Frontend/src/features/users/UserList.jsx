@@ -9,7 +9,10 @@ import { FiEdit } from "react-icons/fi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Button from "../../components/Button";
-const colums = ["full_name", "email", "role"];
+import { GoPlus } from "react-icons/go";
+const columns = ["full_name", "email", "role"];
+const headerColumns = ["full name", "email", "role"];
+
 const UserList = () => {
   const navigate = useNavigate();
   const { token } = useSelector((store) => store.auth);
@@ -72,33 +75,36 @@ const UserList = () => {
   const actionList = [
     {
       id: 0,
-      icon: <MdOutlineDelete size={20} color="#b50808" />,
+      icon: <MdOutlineDelete size={18} color="var(--natural-light)" />,
       action: (item) => handleDelete(item._id),
     },
     {
       id: 1,
-      icon: <FiEdit size={18} color="#1e3a8a" />,
+      icon: <FiEdit size={18} color="var(--natural-light)" />,
       action: (item) => handleNavigate(item),
     },
   ];
-  return (
-    <div className="grid gap-8">
-      <Header title="All Users" link={"/users/list"}>
-        {location.pathname.includes("/users/list") && (
-          <Button to={`/users/add`} type="outline">
-            <span>+</span>
-            <span className="hidden sm:flex">Add User</span>
-          </Button>
-        )}
-      </Header>
 
-      <Table
-        columns={colums}
-        data={data}
-        noFields="grid-cols-[1fr_1fr_1fr_100px]"
-        actionList={actionList}
-      />
-    </div>
+  const renderColumn = {
+    role: (value) => {
+      return (
+        <span
+          className={`px-2 py-1 rounded text-primary-600 text-xs bg-primary-100`}
+        >
+          {value}
+        </span>
+      );
+    },
+  };
+  return (
+    <Table
+      headerColumns={headerColumns}
+      columns={columns}
+      data={data}
+      actionList={actionList}
+      renderColumn={renderColumn}
+      headerClassName="min-w-[150px]"
+    />
   );
 };
 

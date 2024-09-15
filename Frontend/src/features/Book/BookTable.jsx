@@ -11,7 +11,8 @@ const apiKey = import.meta.env.VITE_REACT_APP_BASE_URL;
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-const colums = ["title", "author", "price"];
+const columns = ["title", "author", "price"];
+const headerColumns = ["title", "author", "price"];
 const BookTable = () => {
   const navigate = useNavigate();
   const { token } = useSelector((store) => store.auth);
@@ -74,33 +75,23 @@ const BookTable = () => {
   const actionList = [
     {
       id: 0,
-      icon: <MdOutlineDelete size={20} color="#b50808" />,
+      icon: <MdOutlineDelete size={20} color="var(--natural-light)" />,
       action: (item) => handleDelete(item._id),
     },
     {
       id: 1,
-      icon: <FiEdit size={18} color="#1e3a8a" />,
+      icon: <FiEdit size={18} color="var(--natural-light)" />,
       action: (item) => handleNavigate(item),
     },
   ];
   return (
     <div className="grid gap-8">
-      <Header title="Book register" link={"/book/all"}>
-        {location.pathname.includes("/book/all") && (
-          <Link
-            to={`/book/add`}
-            className="border flex items-center gap-1 min-w-[150px] border-blue-900 hover:bg-blue-900 hover:text-white transition-all ease-in-out duration-300 text-blue-900 font-semibold rounded-[4px] text-sm  flex items-end justify-center w-fit py-2 px-5"
-          >
-            <span>+</span>
-            <span className="hidden sm:flex">Add Book</span>
-          </Link>
-        )}
-      </Header>
       <Table
-        columns={colums}
+        headerColumns={headerColumns}
+        columns={columns}
         data={data}
-        noFields="grid-cols-[1fr_1fr_1fr_100px]"
         actionList={actionList}
+        headerClassName="min-w-[200px]"
       />
 
       {/* pagination */}
@@ -114,11 +105,13 @@ const BookTable = () => {
             }}
             className={` border  ${
               previous
-                ? "border-blue-900 cursor-pointer"
+                ? "border-primary-500 cursor-pointer"
                 : "cursor-default border-neutral-200"
             } flex items-center justify-center w-[30px] h-[30px]  rounded-[4px] `}
           >
-            <HiOutlineChevronLeft color={!previous ? "#d2c9c9" : "#1e3a8a"} />
+            <HiOutlineChevronLeft
+              color={!previous ? "#d2c9c9" : "var(--primary-500)"}
+            />
           </span>
           <span
             onClick={() => {
@@ -128,11 +121,13 @@ const BookTable = () => {
             }}
             className={` border  ${
               next
-                ? "border-blue-900 cursor-pointer"
+                ? "border-primary-500 cursor-pointer"
                 : "border-neutral-200 cursor-default"
             } flex items-center justify-center w-[30px] h-[30px]  rounded-[4px] `}
           >
-            <HiOutlineChevronRight color={!next ? "#d2c9c9" : "#1e3a8a"} />
+            <HiOutlineChevronRight
+              color={!next ? "#d2c9c9" : "var(--primary-500)"}
+            />
           </span>
         </div>
       )}

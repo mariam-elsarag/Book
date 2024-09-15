@@ -19,7 +19,10 @@ const User_Crud = lazy(() => import("./features/users/CrudUser"));
 const PageNotFound = lazy(() => import("./pages/PageNotFound"));
 // unAuth routes
 const Login = lazy(() => import("./features/Auth/Login"));
-
+// orders
+const Order_Container = lazy(() => import("./features/Orders/OrderContainer"));
+// profile
+const Profile = lazy(() => import("./features/Profile/Profile"));
 const App = () => {
   const { token } = useSelector((store) => store.auth);
 
@@ -41,6 +44,10 @@ const App = () => {
               <Route path="add" element={<AddBook />} />
               <Route path=":id/edit" element={<AddBook />} />
             </Route>
+            {/* order */}
+            <Route path="orders" element={<Order_Container />}></Route>
+            {/* profiel */}
+            <Route path="profile" element={<Profile />} />
             <Route path="*" element={<PageNotFound />} />
           </Route>
         ) : (

@@ -52,6 +52,11 @@ exports.resizeUserImg = (req, res, next) => {
     .toFile(`public/img/users/${req.file.filename}`);
   next();
 };
+
+exports.setUserIdToParam = (req, res, next) => {
+  req.params.id = req.user?.role === "admin" ? req.params.id : req.user.id;
+  next();
+};
 // controllers
 exports.getUsers = CatchAsync(async (req, res, next) => {
   const features = new ApiFeatures(User.find(), req.query).paginate();
@@ -117,7 +122,7 @@ exports.updateUser = CatchAsync(async (req, res, next) => {
 });
 
 exports.deActivateUser = CatchAsync(async (req, res, next) => {
-  const { id } = req.params;
+  const id = req.user.id;
   const user = await User.findByIdAndUpdate(id, {
     isActive: false,
     deActiveTime: Date.now(),

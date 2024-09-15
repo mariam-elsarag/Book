@@ -10,8 +10,8 @@ router.use(authController.protect);
 router
   .route("/")
   .get(authController.getMe, userController.getUser)
-  .patch(userController.uploadUserImg, userController.updateUser);
-router.route("/:id").delete(userController.deleteUser);
+  .patch(userController.uploadUserImg, userController.updateUser)
+  .delete(userController.setUserIdToParam, userController.deleteUser);
 
-router.route("/:id/deactivate").patch(userController.deActivateUser);
+router.route("/deactivate").patch(userController.deActivateUser);
 module.exports = router;

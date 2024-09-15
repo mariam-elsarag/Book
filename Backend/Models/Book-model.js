@@ -38,6 +38,11 @@ const bookSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    images: [String],
+    thumbnail: {
+      type: String,
+      required: [true, "A book must have thumbnail image"],
+    },
   },
   {
     toJSON: { virtuals: true },

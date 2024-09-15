@@ -9,6 +9,7 @@ import SpinnerFullPage from "../Ui/SpinnerFullPage";
 import Input from "./Input";
 import { Dropdown } from "primereact/dropdown";
 import Spinner from "../Ui/Spinner";
+import Button from "./Button";
 
 const Crud = ({
   getFunction,
@@ -35,14 +36,6 @@ const Crud = ({
   if (loadingGetData) return <SpinnerFullPage />;
   return (
     <div className="grid gap-8">
-      <header className="flex items-center gap-2 justify-between">
-        <Link
-          to={allDataLink}
-          className="text-blue-900  font-bold text-lg md:text-2xl  capitalize "
-        >
-          {location.pathname.includes("edit") ? editTitle : addTitle}
-        </Link>
-      </header>
       <form
         onSubmit={handleSubmit(
           location.pathname.includes("edit") ? updateFunction : submitFunction
@@ -98,22 +91,15 @@ const Crud = ({
         </div>
 
         <div className="flex items-center justify-end gap-4">
-          <Link
-            to={allDataLink}
-            className="border border-blue-900 px-4 h-[38px] flex items-center justify-center text-blue-900 rounded-[4px] capitalize text-sm transition-all ease-in-out duration-300 hover:bg-blue-900 hover:text-white "
-          >
-            view all
-          </Link>
-          <button
-            type="submit"
+          <Button
+            role="submit"
             disabled={
               Object.keys(dirtyFields)?.length > 0 ? false : true || loading
             }
-            className=" disabled:bg-white disabled:text-gray-400 disabled:shadow-sm disabled:border-gray-400 flex items-center gap-2 outline-none shadow-none bg-blue-900 text-white text-sm border border-blue-900 hover:bg-white hover:text-blue-900 hover:border-blue-900 transition-all duration-300 ease-in-out px-4 h-[38px] rounded-[4px]"
           >
             Submit
             {loading && <Spinner className="w-[18px] h-[18px]" />}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

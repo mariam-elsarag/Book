@@ -5,7 +5,7 @@ import PageLayout from "../Ui/PageLayout";
 
 const AppLayout = () => {
   return (
-    <div className="flex items-start gap-3 h-screen">
+    <div className="flex items-start  h-screen">
       <Sidebar />
       <PageLayout>
         <Outlet />
