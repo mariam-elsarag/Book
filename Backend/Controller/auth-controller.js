@@ -8,7 +8,7 @@ const User = require("../Models/User-model");
 const CatchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const httpStatusText = require("../utils/httpStatusText");
-const sendEmail = require("../utils/sendEmail");
+const Email = require("../utils/sendEmail");
 const filterBodyFields = require("../utils/filterBodyFields");
 
 const generateToken = (user) => {
@@ -178,24 +178,11 @@ exports.forgetPassword = CatchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   // Create the reset URL
-  const resetURL = `${process.env.FRONT_SERVER}/forget-password/${resetToken}`;
-
-  // Construct the email message
-  const html = `
-  <h2>Forget your password?</h2>
-  <p>
-    Click on the following link to reset your password: <a href="${resetURL}">Reset Password</a>.
-  </p>
-  <p>If you didn't forget your password, please ignore this email.</p>
-`;
 
   try {
+    const resetURL = `${process.env.FRONT_SERVER}/forget-password/${resetToken}`;
     // Send the email
-    await sendEmail({
-      email,
-      subject: "Password Reset",
-      html,
-    });
+    await new Email(user, resetURL).sendPasswordReset();
   } catch (err) {
     console.log(err, "err");
     user.resetPasswordToken = undefined;

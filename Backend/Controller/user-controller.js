@@ -40,18 +40,18 @@ const upload = multer({
 });
 
 exports.uploadUserImg = upload.single("profile_img");
-exports.resizeUserImg = (req, res, next) => {
+exports.resizeUserImg = CatchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
   req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
   // resize image
-  sharp(req.file.buffer)
+  await sharp(req.file.buffer)
     .resize(300, 300)
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
     .toFile(`public/img/users/${req.file.filename}`);
   next();
-};
+});
 
 exports.setUserIdToParam = (req, res, next) => {
   req.params.id = req.user?.role === "admin" ? req.params.id : req.user.id;

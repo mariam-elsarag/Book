@@ -4,7 +4,7 @@ const User = require("../Models/User-model");
 const CatchAsync = require("../utils/catchAsync");
 const filterBodyFields = require("../utils/filterBodyFields");
 const AppError = require("../utils/appError");
-const sendEmail = require("../utils/sendEmail");
+const Email = require("../utils/sendEmail");
 
 exports.createUser = CatchAsync(async (req, res, next) => {
   const errors = [];
@@ -31,23 +31,16 @@ exports.createUser = CatchAsync(async (req, res, next) => {
   const resetToken = user.CreateResetToken(24 * 60);
 
   await user.save({ validateBeforeSave: false });
-  const resetURL = `${process.env.FRONT_SERVER}/create-password/${resetToken}`;
 
-  const html = `
-  <h2>Create new password</h2>
-  <p>
-    Click on the following link to create your password: <a href="${resetURL}">Reset Password</a>.
-  </p>
-<p>Token will be expire after one day</p>
-`;
   try {
-    // Send the email
-    await sendEmail({
-      email: filterBody.email,
-      subject: "Create new passowrd Reset",
-      html,
+    const resetURL = `${process.env.FRONT_SERVER}/create-password/${resetToken}`;
+    await new Email(user, resetURL).sendCreatePassword();
+    res.status(201).json({
+      message: "Create new password is send",
+      resetToken,
     });
   } catch (err) {
+    console.log(err, "email");
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
@@ -58,9 +51,4 @@ exports.createUser = CatchAsync(async (req, res, next) => {
       )
     );
   }
-
-  res.status(201).json({
-    message: "Reset password is send",
-    resetToken,
-  });
 });

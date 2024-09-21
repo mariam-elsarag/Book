@@ -1,12 +1,44 @@
+const multer = require("multer");
+const sharp = require("sharp");
+// model
 const Book = require("../Models/Book-model");
 const Favorite = require("../Models/Favorite-model");
-
+// utils
 const AppError = require("../utils/appError");
 const ApiFeatures = require("../utils/apiFeatures");
 const CatchAsync = require("../utils/catchAsync");
 const filterBodyFields = require("../utils/filterBodyFields");
 // controller
 const Factor = require("./handle-factory");
+
+// configure upload function
+const multerStorage = multer.memoryStorage();
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("Please upload only image", 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+exports.uploadBookImages = upload.single("thumbnail");
+// resize images
+exports.resizeBookImages = CatchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `book-${req.user.id}-${Date.now()}.jpeg`;
+  // resize image
+  await sharp(req.file.buffer)
+    .resize(300, 300)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/books/${req.file.filename}`);
+  next();
+});
 exports.getBooks = CatchAsync(async (req, res, next) => {
   const features = new ApiFeatures(Book.find(), req.query)
     .filter()
@@ -96,17 +128,16 @@ exports.createBook = CatchAsync(async (req, res, next) => {
       errors[el] = `${el} is required`;
     }
   });
+  if (req.file) {
+    filterBody.thumbnail = req.file.filename;
+  } else {
+    errors.push({ thumbnail: "Thumbnail image is required" });
+  }
 
   if (Object.keys(errors).length > 0) {
     return next(new AppError(errors, 400));
   }
-  const book = await Book.create({
-    title: filterBody.title,
-    author: filterBody.author,
-    price: filterBody.price,
-    published_year: filterBody.published_year,
-    genre: filterBody.genre,
-  });
+  const book = await Book.create(filterBody);
   res.status(201).json({ data: book });
 });
 
