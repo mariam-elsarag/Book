@@ -21,6 +21,7 @@ const adminRoute = require("./Routes/admin-route");
 const favoriteRoute = require("./Routes/favorite-route");
 const genreRoute = require("./Routes/genre-route");
 const reviewRoute = require("./Routes/review-route");
+const paymentRoute = require("./Routes/payment-route");
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use("/api/user", userRoute);
 app.use("/api/favorite", favoriteRoute);
 app.use("/api/genre", genreRoute);
 app.use("/api/review", reviewRoute);
+app.use("/api/payment", paymentRoute);
 
 // error route
 app.all("*", (req, res, next) => {
