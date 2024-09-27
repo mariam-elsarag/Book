@@ -41,7 +41,7 @@ exports.resizeBookImages = CatchAsync(async (req, res, next) => {
 });
 exports.getBooks = CatchAsync(async (req, res, next) => {
   const features = new ApiFeatures(Book.find(), req.query)
-    .filter()
+    .filter(["title"])
     .limitFields("-__v")
     .paginate();
 
@@ -85,9 +85,10 @@ exports.getBooks = CatchAsync(async (req, res, next) => {
 });
 
 exports.getBook = CatchAsync(async (req, res, next) => {
-  const feaures = new ApiFeatures(Book.findById(req.params.id), req.query)
-    .filter(["title"])
-    .limitFields("-__v");
+  const feaures = new ApiFeatures(
+    Book.findById(req.params.id),
+    req.query
+  ).limitFields("-__v");
   let book = await feaures.query.populate("reviews");
   if (!book) {
     return next(new AppError("Book not found", 404));
