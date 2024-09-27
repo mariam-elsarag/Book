@@ -4,11 +4,20 @@ const multer = require("multer");
 // controller
 const authController = require("../Controller/auth-controller");
 const paymentController = require("../Controller/payment-controller");
+
 const upload = multer();
-router.post(
-  "/checkout-session/:bookId",
-  upload.none(),
-  authController.protect,
-  paymentController.getCheckoutSession
-);
+router
+  .route("/checkout-session/:bookId")
+  .post(
+    upload.none(),
+    authController.protect,
+    paymentController.getCheckoutSession
+  );
+router
+  .route("/success-payment")
+  .post(
+    upload.none(),
+    authController.protect,
+    paymentController.successPayment
+  );
 module.exports = router;

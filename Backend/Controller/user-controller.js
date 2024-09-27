@@ -59,7 +59,9 @@ exports.setUserIdToParam = (req, res, next) => {
 };
 // controllers
 exports.getUsers = CatchAsync(async (req, res, next) => {
-  const features = new ApiFeatures(User.find(), req.query).paginate();
+  const features = new ApiFeatures(User.find(), req.query)
+    .filter(["email"])
+    .paginate();
   const users = await features.query.select("-__v");
   const paginationData = await features.getPaginationData(User);
   const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}${

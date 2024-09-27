@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
+const path = require("path");
 
 // utils
 const httpStatusText = require("./utils/httpStatusText");
@@ -22,9 +23,11 @@ const favoriteRoute = require("./Routes/favorite-route");
 const genreRoute = require("./Routes/genre-route");
 const reviewRoute = require("./Routes/review-route");
 const paymentRoute = require("./Routes/payment-route");
+const orderRoute = require("./Routes/order-route");
 
 const app = express();
 
+app.use("/public", express.static(path.join(__dirname, "public")));
 // controller
 const GlobalErrorHandler = require("./Controller/error-controller");
 
@@ -59,6 +62,7 @@ app.use("/api/favorite", favoriteRoute);
 app.use("/api/genre", genreRoute);
 app.use("/api/review", reviewRoute);
 app.use("/api/payment", paymentRoute);
+app.use("/api/order", orderRoute);
 
 // error route
 app.all("*", (req, res, next) => {

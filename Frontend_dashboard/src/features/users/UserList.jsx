@@ -10,6 +10,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Button from "../../components/Button";
 import { GoPlus } from "react-icons/go";
+import TableHeader from "../../Ui/TableHeader";
+import { Dropdown } from "primereact/dropdown";
 const columns = ["full_name", "email", "role"];
 const headerColumns = ["full name", "email", "role"];
 
@@ -20,7 +22,7 @@ const UserList = () => {
   const [loading, setLoading] = useState(false);
   const [next, setNext] = useState(`${apiKey}/api/admin/users/?page=1`);
   const [previous, setpreviouse] = useState(null);
-
+  const [role, setRole] = useState("all");
   const getUsers = async (endpoint) => {
     const controller = new AbortController();
     const signal = controller.signal;
@@ -29,6 +31,7 @@ const UserList = () => {
       try {
         setLoading(true);
         const Endpoint = endpoint ? endpoint : next;
+
         const response = await axios.get(Endpoint, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -49,8 +52,12 @@ const UserList = () => {
     }
   };
   useEffect(() => {
-    getUsers(`${apiKey}/api/admin/users/?page=1`);
-  }, []);
+    if (role !== "all") {
+      getUsers(`${apiKey}/api/admin/users/?role=${role}&page=1`);
+    } else {
+      getUsers(`${apiKey}/api/admin/users/?page=1`);
+    }
+  }, [role]);
 
   const handleDelete = async (id) => {
     try {
@@ -96,15 +103,46 @@ const UserList = () => {
       );
     },
   };
+  const listData = [
+    { id: 0, title: "all", value: "all" },
+    { id: 1, title: "Admin", value: "admin" },
+    { id: 2, title: "User", value: "user" },
+  ];
   return (
-    <Table
-      headerColumns={headerColumns}
-      columns={columns}
-      data={data}
-      actionList={actionList}
-      renderColumn={renderColumn}
-      headerClassName="min-w-[150px]"
-    />
+    <>
+      <TableHeader
+        searchApi={
+          role !== "all"
+            ? `${apiKey}/api/admin/users/?role=${role}&page=1`
+            : `${apiKey}/api/admin/users/?page=1`
+        }
+        setData={setData}
+        setNext={setNext}
+        setPrev={setpreviouse}
+        searchPlaceholder="search with email"
+      >
+        <Dropdown
+          inputId="role"
+          options={listData?.map((item) => ({
+            title: item?.title,
+            value: item?.value,
+          }))}
+          optionLabel="title"
+          onChange={(e) => setRole(e.target.value)}
+          value={role}
+          className={` input !py-0 `}
+          placeholder="Select role"
+        />
+      </TableHeader>
+      <Table
+        headerColumns={headerColumns}
+        columns={columns}
+        data={data}
+        actionList={actionList}
+        renderColumn={renderColumn}
+        headerClassName="min-w-[150px]"
+      />
+    </>
   );
 };
 

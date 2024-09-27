@@ -75,6 +75,17 @@ const BookCrud = () => {
     {
       id: 4,
       type: "input",
+      fieldName: "quantity",
+      label: "Quantity",
+      inputType: "number",
+      placeholder: "Enter your quantity of bookd",
+      validator: {
+        required: "quantity is required",
+      },
+    },
+    {
+      id: 5,
+      type: "input",
       fieldName: "published_year",
       label: "Published year",
       inputType: "number",
@@ -84,7 +95,7 @@ const BookCrud = () => {
       },
     },
     {
-      id: 5,
+      id: 6,
       label: "Book Genre",
       type: "dropdown",
       fieldName: "genre",
@@ -92,7 +103,31 @@ const BookCrud = () => {
         name: item?.title,
         value: item?._id,
       })),
+      validator: {
+        required: "Book genre  is required",
+      },
       placeholder: "Select book genre ",
+    },
+    {
+      id: 7,
+      type: "textarea",
+      fieldName: "description",
+      label: "Description",
+      inputType: "text",
+      placeholder: "Enter description of the book",
+      validator: {
+        required: "Description is required",
+      },
+    },
+    {
+      id: 8,
+      label: "Thumbnail",
+      type: "file",
+      fieldName: "thumbnail",
+      validator: {
+        required: "Book thumbnail is required",
+      },
+      placeholder: "Select your book thumbnail image ",
     },
   ];
 
@@ -116,6 +151,9 @@ const BookCrud = () => {
       setValue("published_year", fetchedData.published_year);
       setValue("price", fetchedData.price);
       setValue("genre", fetchedData.genre._id);
+      setValue("description", fetchedData.description);
+      setValue("quantity", fetchedData.quantity);
+      setValue("thumbnail", `${apiKey}${fetchedData.thumbnail}`);
     } catch (error) {
       console.error("Error fetching data:", error);
 
@@ -131,12 +169,14 @@ const BookCrud = () => {
       setIsSubmiting(true);
       const response = await axios.post(`${apiKey}/api/book/`, data, {
         headers: {
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.status === 201) {
-        reset();
+        // reset();
+        console.log(response, "s");
       }
     } catch (err) {
       console.log("error", err);
@@ -152,6 +192,7 @@ const BookCrud = () => {
       setLoading(true);
       const response = await axios.patch(`${apiKey}/api/book/${id}`, data, {
         headers: {
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -163,6 +204,10 @@ const BookCrud = () => {
         setValue("author", response.data.book.author);
         setValue("published_year", response.data.book.published_year);
         setValue("price", response.data.book.price);
+        setValue("description", fetchedData.description);
+        setValue("quantity", fetchedData.quantity);
+        setValue("quantity", fetchedData.quantity);
+        setValue("thumbnail", `${apiKey}${fetchedData.thumbnail}`);
       }
     } catch (err) {
       console.log("error", err);
@@ -180,8 +225,8 @@ const BookCrud = () => {
         getFunction={getBook}
         isSubmiting={isSubmiting}
         errors={errors}
-        loading={loadingBook}
-        loadingGetData={loading}
+        loading={loading}
+        loadingGetData={loadingBook}
         handleSubmit={handleSubmit}
         control={control}
         dirtyFields={dirtyFields}

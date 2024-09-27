@@ -85,10 +85,9 @@ exports.getBooks = CatchAsync(async (req, res, next) => {
 });
 
 exports.getBook = CatchAsync(async (req, res, next) => {
-  const feaures = new ApiFeatures(
-    Book.findById(req.params.id),
-    req.query
-  ).limitFields("-__v");
+  const feaures = new ApiFeatures(Book.findById(req.params.id), req.query)
+    .filter(["title"])
+    .limitFields("-__v");
   let book = await feaures.query.populate("reviews");
   if (!book) {
     return next(new AppError("Book not found", 404));
@@ -117,10 +116,20 @@ exports.createBook = CatchAsync(async (req, res, next) => {
     "author",
     "price",
     "published_year",
-    "genre"
+    "genre",
+    "quantity",
+    "description"
   );
 
-  const listData = ["title", "author", "price", "published_year", "genre"];
+  const listData = [
+    "title",
+    "author",
+    "price",
+    "published_year",
+    "genre",
+    "quantity",
+    "description",
+  ];
   let errors = {};
 
   listData.forEach((el) => {
@@ -129,7 +138,7 @@ exports.createBook = CatchAsync(async (req, res, next) => {
     }
   });
   if (req.file) {
-    filterBody.thumbnail = req.file.filename;
+    filterBody.thumbnail = `/public/img/books/${req.file.filename}`;
   } else {
     errors.push({ thumbnail: "Thumbnail image is required" });
   }
@@ -148,8 +157,13 @@ exports.updateBook = CatchAsync(async (req, res, next) => {
     "author",
     "price",
     "published_year",
-    "genre"
+    "genre",
+    "quantity",
+    "description"
   );
+  if (req.file) {
+    filterBody.thumbnail = `/public/img/books/${req.file.filename}`;
+  }
 
   const features = new ApiFeatures(
     Book.findByIdAndUpdate(req.params.id, filterBody, {

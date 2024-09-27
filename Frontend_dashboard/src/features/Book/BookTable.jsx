@@ -10,6 +10,7 @@ import Table from "../../Ui/Table";
 const apiKey = import.meta.env.VITE_REACT_APP_BASE_URL;
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import TableHeader from "../../Ui/TableHeader";
 
 const columns = ["title", "author", "price"];
 const headerColumns = ["title", "author", "price"];
@@ -86,6 +87,13 @@ const BookTable = () => {
   ];
   return (
     <div className="grid gap-8">
+      <TableHeader
+        searchApi={`${apiKey}/api/book/?page=1`}
+        setData={setData}
+        setNext={setNext}
+        setPrev={setpreviouse}
+        searchPlaceholder="search"
+      />
       <Table
         headerColumns={headerColumns}
         columns={columns}

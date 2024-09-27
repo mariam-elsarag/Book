@@ -10,6 +10,8 @@ import Input from "./Input";
 import { Dropdown } from "primereact/dropdown";
 import Spinner from "../Ui/Spinner";
 import Button from "./Button";
+import UploadFile from "./UploadFile";
+import Textarea from "./Textarea";
 
 const Crud = ({
   getFunction,
@@ -64,6 +66,25 @@ const Crud = ({
                       disabled={isSubmiting}
                     />
                   </>
+                ) : item?.type === "file" ? (
+                  <UploadFile
+                    label={item?.label}
+                    handleChange={field.onChange}
+                    isMulti={false}
+                    value={field.value}
+                    error={error?.message || errors?.[item.fieldName]?.message}
+                  />
+                ) : item?.type === "textarea" ? (
+                  <Textarea
+                    id={item?.id}
+                    label={item?.label}
+                    type={item?.inputType}
+                    placeholder={item?.placeholder}
+                    error={error?.message || errors?.[item.fieldName]?.message}
+                    handleChange={field.onChange}
+                    value={field.value}
+                    disabled={isSubmiting}
+                  />
                 ) : (
                   <div className="grid gap-2">
                     <label htmlFor={item?.label}>{item?.label}</label>
@@ -93,9 +114,9 @@ const Crud = ({
         <div className="flex items-center justify-end gap-4">
           <Button
             role="submit"
-            disabled={
-              Object.keys(dirtyFields)?.length > 0 ? false : true || loading
-            }
+            // disabled={
+            //   Object.keys(dirtyFields)?.length > 0 ? false : true || loading
+            // }
           >
             Submit
             {loading && <Spinner className="w-[18px] h-[18px]" />}

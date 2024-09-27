@@ -7,6 +7,10 @@ const bookSchema = new mongoose.Schema(
       required: [true, "Book title is required"],
       maxlength: [100, "You exceed max length for title, 100 characters"],
     },
+    description: {
+      type: String,
+      required: [true, "Book description is required"],
+    },
     genre: {
       type: mongoose.Schema.ObjectId,
       ref: "Genre",
@@ -38,7 +42,9 @@ const bookSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-
+    quantity: {
+      type: Number,
+    },
     thumbnail: {
       type: String,
       required: [true, "A book must have thumbnail image"],
