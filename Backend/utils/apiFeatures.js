@@ -4,7 +4,7 @@ class ApiFeatures {
     this.queryString = queryString;
   }
 
-  filter() {
+  filter(fields = []) {
     const queryObj = { ...this.queryString };
     const excludedFields = ["page", "limit", "fields", "sort"];
     excludedFields.forEach((item) => delete queryObj[item]);
@@ -13,11 +13,30 @@ class ApiFeatures {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    if (this.queryString.keywords) {
+    const combinedFilters = [];
+
+    if (
+      this.queryString.keywords &&
+      this.queryString.keywords.trim() !== "" &&
+      fields.length > 0
+    ) {
       const keywordRegex = new RegExp(this.queryString.keywords, "i");
-      this.query = this.query.find({ title: { $regex: keywordRegex } });
+
+      const keywordSearchConditions = fields.map((field) => ({
+        [field]: { $regex: keywordRegex },
+      }));
+
+      this.query = this.query.find({ $or: keywordSearchConditions });
     } else {
-      this.query = this.query.find(JSON.parse(queryStr));
+      if (Object.keys(queryObj).length > 0) {
+        combinedFilters.push(JSON.parse(queryStr));
+      }
+    }
+
+    if (combinedFilters.length > 0) {
+      this.query = this.query.find({ $and: combinedFilters });
+    } else {
+      this.query = this.query.find({});
     }
 
     return this;
