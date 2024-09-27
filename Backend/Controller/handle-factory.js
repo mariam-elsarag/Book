@@ -68,3 +68,21 @@ exports.createOne = (Model, filterData) =>
 
     res.status(201).json({ data: doc });
   });
+
+exports.updateOne = (Model, filterData) =>
+  CatchAsync(async (req, res, next) => {
+    const { id } = req.params;
+    const filterBody = filterBodyFields(req.body, filterData);
+
+    const doc = await Model.findByIdAndUpdate(id, filterBody, {
+      new: true,
+      runValidators: false,
+    });
+    if (!doc) {
+      return next(new AppError("Not found", 404));
+    }
+
+    res.status(200).json({
+      doc,
+    });
+  });
