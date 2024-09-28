@@ -172,7 +172,7 @@ exports.updateBook = CatchAsync(async (req, res, next) => {
       runValidators: true,
     }),
     ""
-  ).limitFields();
+  ).limitFields("-_v");
   const updatedBook = await features.query;
   if (!updatedBook) {
     return next(new AppError("Book not found", 404));
