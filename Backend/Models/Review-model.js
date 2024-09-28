@@ -35,13 +35,7 @@ const reviewScema = new mongoose.Schema(
     },
   }
 );
-// to make user only review this book one time
-reviewScema.index(
-  { user: 1, book: 1 },
-  {
-    unique: true,
-  }
-);
+
 // to calc average rating
 reviewScema.statics.calcAverageRating = async function (bookId) {
   const stats = await this.aggregate([

@@ -1,5 +1,6 @@
 // model
 const Review = require("../Models/Review-model");
+const Order = require("../Models/Order-model");
 // utils
 const httpStatusText = require("../utils/httpStatusText");
 const catchAsync = require("../utils/catchAsync");
@@ -31,13 +32,25 @@ exports.createReview = catchAsync(async (req, res, next) => {
   if (errors?.length > 0) {
     return next(new AppError(errors, 400));
   }
+  const order = await Order.findOne({ book: id, user: req.user._id });
+  if (!order) {
+    return next(new AppError("You're not allowed to review this book", 403));
+  }
+  const havePreviousReview = await Review.findOne({
+    book: id,
+    user: req.user._id,
+  });
+
+  if (havePreviousReview) {
+    return next(new AppError("You already reviewed this book", 403));
+  }
   const reviewData = await Review.create({
     rating: rate,
     review,
     user: req.user._id,
     book: id,
   });
-  res.status(201).json({ status: httpStatusText.SUCCESS, review: reviewData });
+  res.status(201).json({ review: reviewData });
 });
 // delete review
 exports.deleteReview = catchAsync(async (req, res, next) => {
