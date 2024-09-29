@@ -52,7 +52,7 @@ exports.getCheckoutSession = CatchAsync(async (req, res, next) => {
 });
 
 exports.successPayment = CatchAsync(async (req, res, next) => {
-  const { book, price, quantity } = req.body;
+  const { book, quantity } = req.body;
   if (!book && !req.user && !quantity)
     return next(new AppError("Book and price are required", 400));
   const bookData = await Book.findById(book);
@@ -64,7 +64,11 @@ exports.successPayment = CatchAsync(async (req, res, next) => {
   }
   bookData.quantity -= quantity;
   await bookData.save();
-  await Order.create({ book, price: bookData.price, user: req.user._id });
+  await Order.create({
+    book,
+    price: bookData.price * quantity,
+    user: req.user._id,
+  });
   res.status(201).json({
     message: "Order created successfully",
   });

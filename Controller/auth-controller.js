@@ -93,7 +93,7 @@ exports.login = CatchAsync(async (req, res, next) => {
   if (!user || !(await user.checkPassword(password, user.password))) {
     return next(new AppError("Email or password is incorrect", 401));
   }
-  console.log(user.isActive, "roam");
+
   // if user is deactive and try to activate account again
   if (!user.isActive) {
     user.isActive = true;
@@ -184,7 +184,6 @@ exports.forgetPassword = CatchAsync(async (req, res, next) => {
     // Send the email
     await new Email(user, resetURL).sendPasswordReset();
   } catch (err) {
-    console.log(err, "err");
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });

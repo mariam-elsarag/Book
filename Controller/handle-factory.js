@@ -55,7 +55,7 @@ exports.createOne = (Model, filterData) =>
   CatchAsync(async (req, res, next) => {
     const filterBody = filterBodyFields(req.body, ...filterData);
     let errors = {};
-    console.log(filterData, "body");
+
     filterData.forEach((el) => {
       if (!filterBody.hasOwnProperty(el) || !filterBody[el]) {
         errors[el] = `${el} is required`;

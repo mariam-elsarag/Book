@@ -33,14 +33,13 @@ exports.createUser = CatchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   try {
-    const resetURL = `${process.env.FRONT_SERVER}/create-password/${resetToken}`;
+    const resetURL = `${process.env.FRONT_SERVER}/create-password/?token=${resetToken}`;
     await new Email(user, resetURL).sendCreatePassword();
     res.status(201).json({
       message: "Create new password is send",
       resetToken,
     });
   } catch (err) {
-    console.log(err, "email");
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });

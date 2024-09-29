@@ -25,7 +25,7 @@ const orderSchema = new mongoose.Schema({
 });
 orderSchema.pre(/^find/, function (next) {
   this.populate({ path: "user", select: "profile_img first_name last_name" });
-  this.populate({ path: "book", select: "title thumbnail quantity price" });
+  this.populate({ path: "book", select: "title quantity price" });
   next();
 });
 const Order = mongoose.model("Order", orderSchema, "Order");

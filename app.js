@@ -7,7 +7,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const hpp = require("hpp");
 const path = require("path");
-
+const compression = require("compression");
 // utils
 const httpStatusText = require("./utils/httpStatusText");
 const AppError = require("./utils/appError");
@@ -46,6 +46,8 @@ app.use(hpp());
 app.use(cors());
 //corn
 
+// compression for text and json
+app.use(compression());
 // limit request from same api
 const limiter = limitRate({
   max: 300,
